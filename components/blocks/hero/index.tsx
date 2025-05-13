@@ -1,3 +1,6 @@
+'use client';
+
+import React, { useState } from 'react';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import HappyUsers from "./happy-users";
@@ -5,92 +8,109 @@ import HeroBg from "./bg";
 import { Hero as HeroType } from "@/types/blocks/hero";
 import Icon from "@/components/icon";
 import Link from "next/link";
+import { DomainCheckResult } from '@/types/domain';
+import DomainSearch from './DomainSearch';
+import DomainResults from './DomainResults';
 
-export default function Hero({ hero }: { hero: HeroType }) {
-  if (hero.disabled) {
-    return null;
-  }
+export default function Hero() {
+  const [results, setResults] = useState<DomainCheckResult[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const highlightText = hero.highlight_text;
-  let texts = null;
-  if (highlightText) {
-    texts = hero.title?.split(highlightText, 2);
-  }
+  const handleSearch = async (keywords: string[], tlds: string[]) => {
+    try {
+      setLoading(true);
+      setError(null);
+      setResults([]);
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 60000);
+
+      const response = await fetch('/api/domain-check', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          keywords,
+          tlds,
+        }),
+        signal: controller.signal,
+      }).finally(() => clearTimeout(timeoutId));
+
+      if (!response.ok) {
+        const contentType = response.headers.get('content-type');
+        if (contentType?.includes('application/json')) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || `Server error: ${response.status}`);
+        } else {
+          throw new Error('Connection error. Please try with fewer TLDs or domains.');
+        }
+      }
+
+      const data = await response.json();
+      if (data.success && Array.isArray(data.results)) {
+        setResults(data.results);
+        
+        if (data.limitApplied) {
+          let limitMessage = '';
+          if (data.totalRequestedKeywords > data.totalProcessedKeywords) {
+            limitMessage += `Only the first ${data.totalProcessedKeywords} of ${data.totalRequestedKeywords} keywords were processed. `;
+          }
+          if (data.totalRequestedTlds > data.totalProcessedTlds) {
+            limitMessage += `Only the first ${data.totalProcessedTlds} of ${data.totalRequestedTlds} TLDs were processed. `;
+          }
+          limitMessage += 'This limitation helps prevent server overload.';
+          setError(limitMessage);
+        }
+
+        const errorsCount = data.results.filter((result: DomainCheckResult) => result.error).length;
+        if (errorsCount > 0) {
+          const totalCount = data.results.length;
+          const errorPercent = Math.round((errorsCount / totalCount) * 100);
+          if (errorPercent > 30) {
+            setError(`Note: ${errorsCount} out of ${totalCount} (${errorPercent}%) domain queries failed. This might be due to rate limits or connectivity issues with WHOIS servers.`);
+          }
+        }
+      } else {
+        throw new Error('Invalid response format');
+      }
+    } catch (err) {
+      console.error('Domain check error:', err);
+      if (err instanceof DOMException && err.name === 'AbortError') {
+        setError('Request timed out. Please try with fewer TLDs or keywords.');
+      } else {
+        setError(err instanceof Error ? err.message : 'An error occurred during domain check');
+      }
+      if (results.length > 0) {
+        setError(prev => `${prev || ''} Some results are displayed below, but they may be incomplete.`);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
       <HeroBg />
       <section className="py-24">
         <div className="container">
-          {hero.show_badge && (
-            <div className="flex items-center justify-center mb-8">
-              <img
-                src="/imgs/badges/phdaily.svg"
-                alt="phdaily"
-                className="h-10 object-cover"
+          <div className="text-center">
+            <h1 className="mx-auto mb-3 mt-4 max-w-3xl text-balance text-4xl font-bold lg:mb-7 lg:text-7xl">
+              Domain Availability Checker
+            </h1>
+            <p className="mx-auto max-w-3xl text-muted-foreground lg:text-xl">
+              Check domain availability across multiple TLDs instantly
+            </p>
+
+            <div className="mt-12">
+              <DomainSearch onSearch={handleSearch} loading={loading} />
+              <DomainResults 
+                results={results}
+                loading={loading}
+                error={error}
               />
             </div>
-          )}
-          <div className="text-center">
-            {hero.announcement && (
-              <a
-                href={hero.announcement.url}
-                className="mx-auto mb-3 inline-flex items-center gap-3 rounded-full border px-2 py-1 text-sm"
-              >
-                {hero.announcement.label && (
-                  <Badge>{hero.announcement.label}</Badge>
-                )}
-                {hero.announcement.title}
-              </a>
-            )}
-
-            {texts && texts.length > 1 ? (
-              <h1 className="mx-auto mb-3 mt-4 max-w-3xl text-balance text-4xl font-bold lg:mb-7 lg:text-7xl">
-                {texts[0]}
-                <span className="bg-gradient-to-r from-primary via-primary to-primary bg-clip-text text-transparent">
-                  {highlightText}
-                </span>
-                {texts[1]}
-              </h1>
-            ) : (
-              <h1 className="mx-auto mb-3 mt-4 max-w-3xl text-balance text-4xl font-bold lg:mb-7 lg:text-7xl">
-                {hero.title}
-              </h1>
-            )}
-
-            <p
-              className="m mx-auto max-w-3xl text-muted-foreground lg:text-xl"
-              dangerouslySetInnerHTML={{ __html: hero.description || "" }}
-            />
-            {hero.buttons && (
-              <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
-                {hero.buttons.map((item, i) => {
-                  return (
-                    <Link
-                      key={i}
-                      href={item.url || ""}
-                      target={item.target || ""}
-                      className="flex items-center"
-                    >
-                      <Button
-                        className="w-full"
-                        size="lg"
-                        variant={item.variant || "default"}
-                      >
-                        {item.title}
-                        {item.icon && (
-                          <Icon name={item.icon} className="ml-1" />
-                        )}
-                      </Button>
-                    </Link>
-                  );
-                })}
-              </div>
-            )}
-            {hero.tip && (
-              <p className="mt-8 text-md text-muted-foreground">{hero.tip}</p>
-            )}
-            {hero.show_happy_users && <HappyUsers />}
           </div>
         </div>
       </section>

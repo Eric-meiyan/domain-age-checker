@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "../domainsearch"
+		},
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"workbench.colorTheme": "Nord Light"
+	}
+}

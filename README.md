@@ -74,3 +74,9 @@ npm run cf:deploy
 ## License
 
 - [ShipAny AI SaaS Boilerplate License Agreement](LICENSE)
+
+待完成：
+1、页面继续修改，修改 logo、header、footer、修改颜色
+2、调试查询接口，不能总是出错
+3、footer 叫上访问次数
+4、个数限制

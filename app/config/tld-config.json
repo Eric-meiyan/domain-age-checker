@@ -5,7 +5,8 @@
       "server": "whois.verisign-grs.com",
       "availablePattern": "No match for",
       "enabled": true,
-      "displayName": ".com"
+      "displayName": ".com",
+      "isPopular": true
     },
     {
       "name": "edu",
@@ -19,7 +20,8 @@
       "server": "whois.verisign-grs.com",
       "availablePattern": "No match for",
       "enabled": true,
-      "displayName": ".net"
+      "displayName": ".net",
+      "isPopular": true
     },
     {
       "name": "ae",
@@ -1377,21 +1379,24 @@
       "server": "whois.nic.app",
       "availablePattern": "Domain not found",
       "enabled": true,
-      "displayName": ".app"
+      "displayName": ".app",
+      "isPopular": true
     },
     {
       "name": "dev",
       "server": "whois.nic.dev",
       "availablePattern": "Domain not found",
       "enabled": true,
-      "displayName": ".dev"
+      "displayName": ".dev",
+      "isPopular": true
     },
     {
       "name": "io",
       "server": "whois.nic.io",
       "availablePattern": "is available for purchase",
       "enabled": true,
-      "displayName": ".io"
+      "displayName": ".io",
+      "isPopular": true
     }
   ]
 }

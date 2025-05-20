@@ -5,14 +5,15 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import HappyUsers from "./happy-users";
 import HeroBg from "./bg";
-import { Hero as HeroType } from "@/types/blocks/hero";
 import Icon from "@/components/icon";
 import Link from "next/link";
 import { DomainCheckResult } from '@/types/domain';
 import DomainSearch from './DomainSearch';
 import DomainResults from './DomainResults';
+import { useTranslations } from 'next-intl';
 
 export default function Hero() {
+  const t = useTranslations('DomainSearch');
   const [results, setResults] = useState<DomainCheckResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -90,21 +91,43 @@ export default function Hero() {
     }
   };
 
+  const translations = {
+    errorEmptyKeywords: t('errorEmptyKeywords'),
+    errorInvalidKeywords: t('errorInvalidKeywords'),
+    errorGenerationFailed: t('errorGenerationFailed'),
+    errorInvalidResponseFormat: t('errorInvalidResponseFormat'),
+    errorNoKeywordsGenerated: t('errorNoKeywordsGenerated'),
+    errorGenerationRetry: t('errorGenerationRetry'),
+    errorNoKeywords: t('errorNoKeywords'),
+    errorNoTlds: t('errorNoTlds'),
+    normalMode: t('normalMode'),
+    aiMode: t('aiMode'),
+    inputAiDescription: t('inputAiDescription'),
+    inputKeywordsDescription: t('inputKeywordsDescription'),
+    aiPlaceholder: t('aiPlaceholder'),
+    keywordsPlaceholder: t('keywordsPlaceholder'),
+    generating: t('generating'),
+    generateKeywords: t('generateKeywords'),
+    updateKeywords: t('updateKeywords'),
+    currentKeywords: t('currentKeywords'),
+    selectTlds: t('selectTlds'),
+    checking: t('checking'),
+    checkAvailability: t('checkAvailability')
+  };
+
   return (
     <>
       <HeroBg />
-      <section className="py-24">
+      <section className="py-8">
         <div className="container">
           <div className="text-center">
-            <h1 className="mx-auto mb-3 mt-4 max-w-3xl text-balance text-4xl font-bold lg:mb-7 lg:text-7xl">
+            <h1 className="mx-auto mb-3 mt-0 max-w-3xl text-balance text-4xl font-bold lg:mb-7 lg:text-7xl">
               Domain Availability Checker
             </h1>
-            <p className="mx-auto max-w-3xl text-muted-foreground lg:text-xl">
-              Check domain availability across multiple TLDs instantly
-            </p>
+        
 
             <div className="mt-12">
-              <DomainSearch onSearch={handleSearch} loading={loading} />
+              <DomainSearch onSearch={handleSearch} loading={loading} translations={translations} />
               <DomainResults 
                 results={results}
                 loading={loading}

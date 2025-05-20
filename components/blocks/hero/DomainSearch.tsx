@@ -7,45 +7,55 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import TldSelector from '@/components/ui/TldSelector';
 
 interface DomainSearchProps {
   onSearch: (keywords: string[], tlds: string[]) => Promise<void>;
   loading: boolean;
+  translations: {
+    errorEmptyKeywords: string;
+    errorInvalidKeywords: string;
+    errorGenerationFailed: string;
+    errorInvalidResponseFormat: string;
+    errorNoKeywordsGenerated: string;
+    errorGenerationRetry: string;
+    errorNoKeywords: string;
+    errorNoTlds: string;
+    normalMode: string;
+    aiMode: string;
+    inputAiDescription: string;
+    inputKeywordsDescription: string;
+    aiPlaceholder: string;
+    keywordsPlaceholder: string;
+    generating: string;
+    generateKeywords: string;
+    updateKeywords: string;
+    currentKeywords: string;
+    selectTlds: string;
+    checking: string;
+    checkAvailability: string;
+  };
 }
 
-export default function DomainSearch({ onSearch, loading }: DomainSearchProps) {
+export default function DomainSearch({ onSearch, loading, translations }: DomainSearchProps) {
   const [keywordInput, setKeywordInput] = useState('');
-  const [selectedTlds, setSelectedTlds] = useState<string[]>([]);
+  const [selectedTlds, setSelectedTlds] = useState<string[]>(['com']);
   const [error, setError] = useState<string | null>(null);
   const [isAiMode, setIsAiMode] = useState(false);
   const [keywords, setKeywords] = useState<string[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
 
-  // 预定义的TLD列表
-  const availableTlds = [
-    { name: 'com', displayName: '.com' },
-    { name: 'net', displayName: '.net' },
-    { name: 'org', displayName: '.org' },
-    { name: 'io', displayName: '.io' },
-    { name: 'co', displayName: '.co' },
-    { name: 'app', displayName: '.app' },
-  ];
-
   const handleKeywordChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setKeywordInput(e.target.value);
   };
 
-  const handleTldToggle = (tld: string) => {
-    setSelectedTlds(prev => 
-      prev.includes(tld) 
-        ? prev.filter(t => t !== tld)
-        : [...prev, tld]
-    );
+  const handleTldSelectionChange = (newSelectedTlds: string[]) => {
+    setSelectedTlds(newSelectedTlds);
   };
 
   const handleUpdateKeywords = () => {
     if (!keywordInput.trim()) {
-      setError('请输入至少一个关键词');
+      setError(translations.errorEmptyKeywords);
       return;
     }
 
@@ -58,7 +68,7 @@ export default function DomainSearch({ onSearch, loading }: DomainSearchProps) {
         .filter(k => k);
       
       if (newKeywords.length === 0) {
-        setError('请输入有效的关键词');
+        setError(translations.errorInvalidKeywords);
         return;
       }
       
@@ -84,21 +94,21 @@ export default function DomainSearch({ onSearch, loading }: DomainSearchProps) {
       const data = await response.json();
       
       if (!response.ok) {
-        throw new Error(data.error || '生成关键词失败');
+        throw new Error(data.error || translations.errorGenerationFailed);
       }
       
       if (!data.success || !Array.isArray(data.keywords)) {
-        throw new Error('返回数据格式不正确');
+        throw new Error(translations.errorInvalidResponseFormat);
       }
       
       if (data.keywords.length === 0) {
-        setError('无法生成关键词，请尝试更具体的关键词描述');
+        setError(translations.errorNoKeywordsGenerated);
         return;
       }
       
       setKeywords(data.keywords);
     } catch (err) {
-      setError(err instanceof Error ? err.message : '生成关键词失败，请重试');
+      setError(err instanceof Error ? err.message : translations.errorGenerationRetry);
       console.error('AI keyword generation error:', err);
     } finally {
       setIsGenerating(false);
@@ -107,12 +117,12 @@ export default function DomainSearch({ onSearch, loading }: DomainSearchProps) {
 
   const handleSubmit = async () => {
     if (keywords.length === 0) {
-      setError('请先生成或输入关键词');
+      setError(translations.errorNoKeywords);
       return;
     }
 
     if (selectedTlds.length === 0) {
-      setError('请选择至少一个TLD');
+      setError(translations.errorNoTlds);
       return;
     }
 
@@ -130,11 +140,11 @@ export default function DomainSearch({ onSearch, loading }: DomainSearchProps) {
         >
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="normal" id="normal-mode" />
-            <Label htmlFor="normal-mode">普通模式</Label>
+            <Label htmlFor="normal-mode">{translations.normalMode}</Label>
           </div>
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="ai" id="ai-mode" />
-            <Label htmlFor="ai-mode">AI模式</Label>
+            <Label htmlFor="ai-mode">{translations.aiMode}</Label>
           </div>
         </RadioGroup>
       </div>
@@ -142,14 +152,14 @@ export default function DomainSearch({ onSearch, loading }: DomainSearchProps) {
       <div className="space-y-2">
         <label className="text-sm font-medium">
           {isAiMode 
-            ? "输入项目描述，AI将生成域名关键词" 
-            : "输入关键词（逗号分隔）"
+            ? translations.inputAiDescription 
+            : translations.inputKeywordsDescription
           }
         </label>
         <Textarea
           placeholder={isAiMode 
-            ? "例如：我想创建一个销售手工蛋糕和甜点的在线商店..." 
-            : "example, test, mydomain"
+            ? translations.aiPlaceholder 
+            : translations.keywordsPlaceholder
           }
           value={keywordInput}
           onChange={handleKeywordChange}
@@ -165,16 +175,16 @@ export default function DomainSearch({ onSearch, loading }: DomainSearchProps) {
         className="w-full"
       >
         {isGenerating 
-          ? '生成中...' 
+          ? translations.generating 
           : isAiMode 
-            ? '生成关键词' 
-            : '更新关键词'
+            ? translations.generateKeywords 
+            : translations.updateKeywords
         }
       </Button>
 
       {keywords.length > 0 && (
         <div className="space-y-2">
-          <label className="text-sm font-medium">当前关键词：</label>
+          <label className="text-sm font-medium">{translations.currentKeywords}</label>
           <div className="flex flex-wrap gap-2">
             {keywords.map((keyword, index) => (
               <Badge key={index} variant="secondary">
@@ -186,19 +196,12 @@ export default function DomainSearch({ onSearch, loading }: DomainSearchProps) {
       )}
 
       <div className="space-y-2">
-        <label className="text-sm font-medium">选择域名后缀</label>
-        <div className="flex flex-wrap gap-2">
-          {availableTlds.map(tld => (
-            <Badge
-              key={tld.name}
-              variant={selectedTlds.includes(tld.name) ? "default" : "outline"}
-              className="cursor-pointer"
-              onClick={() => handleTldToggle(tld.name)}
-            >
-              {tld.displayName}
-            </Badge>
-          ))}
-        </div>
+        <label className="text-sm font-medium">{translations.selectTlds}</label>
+        <TldSelector 
+          selectedTlds={selectedTlds}
+          onChange={handleTldSelectionChange}
+          maxPopular={12}
+        />
       </div>
 
       {error && (
@@ -211,7 +214,7 @@ export default function DomainSearch({ onSearch, loading }: DomainSearchProps) {
         onClick={handleSubmit}
         disabled={loading || keywords.length === 0 || selectedTlds.length === 0}
       >
-        {loading ? '检查中...' : '检查域名可用性'}
+        {loading ? translations.checking : translations.checkAvailability}
       </Button>
     </div>
   );

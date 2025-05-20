@@ -121,5 +121,43 @@
     "contact_tip": "Other ways to contact us",
     "rating_tip": "How do you feel about ShipAny?",
     "placeholder": "Leave your words here..."
+  },
+  "DomainSearch": {
+    "findYourPerfectDomain": "Find Your Perfect Domain",
+    "enterDomainNamePlaceholder": "e.g. myawesomesite",
+    "searchButton": "Search",
+    "selectTldsTitle": "Select domain extensions:",
+    "currentlySelectedTlds": "Currently selected",
+    "pleaseEnterDomainName": "Please enter a domain name.",
+    "pleaseSelectAtLeastOneTld": "Please select at least one TLD.",
+    "errorEmptyKeywords": "Please enter at least one keyword",
+    "errorInvalidKeywords": "Please enter valid keywords",
+    "errorGenerationFailed": "Failed to generate keywords",
+    "errorInvalidResponseFormat": "Invalid response format",
+    "errorNoKeywordsGenerated": "Unable to generate keywords, please try a more specific description",
+    "errorGenerationRetry": "Failed to generate keywords, please try again",
+    "errorNoKeywords": "Please generate or enter keywords first",
+    "errorNoTlds": "Please select at least one TLD",
+    "normalMode": "Normal Mode",
+    "aiMode": "AI Mode",
+    "inputAiDescription": "Enter project description, AI will generate domain keywords",
+    "inputKeywordsDescription": "Enter keywords (comma separated)",
+    "aiPlaceholder": "Example: I want to create an online store selling handmade cakes and desserts...",
+    "keywordsPlaceholder": "example, test, mydomain",
+    "generating": "Generating...",
+    "generateKeywords": "Generate Keywords",
+    "updateKeywords": "Update Keywords",
+    "currentKeywords": "Current Keywords:",
+    "selectTlds": "Select Domain Extensions",
+    "checking": "Checking...",
+    "checkAvailability": "Check Domain Availability"
+  },
+  "TldSelector": {
+    "searchPlaceholder": "Search TLDs (e.g. .com, .shop)",
+    "popularTlds": "Popular TLDs",
+    "allTlds": "All TLDs",
+    "showAllButton": "View all {count} TLDs",
+    "hideAllButton": "Hide all TLDs",
+    "noTldsFound": "No TLDs found."
   }
 }

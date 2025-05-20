@@ -121,5 +121,43 @@
     "contact_tip": "其他联系方式",
     "rating_tip": "您对 ShipAny 的看法如何？",
     "placeholder": "在这里留下您的反馈..."
+  },
+  "DomainSearch": {
+    "findYourPerfectDomain": "寻找您的完美域名",
+    "enterDomainNamePlaceholder": "例如 myawesomesite",
+    "searchButton": "搜索",
+    "selectTldsTitle": "选择域名后缀：",
+    "currentlySelectedTlds": "当前已选择",
+    "pleaseEnterDomainName": "请输入域名。",
+    "pleaseSelectAtLeastOneTld": "请至少选择一个域名后缀。",
+    "errorEmptyKeywords": "请输入至少一个关键词",
+    "errorInvalidKeywords": "请输入有效的关键词",
+    "errorGenerationFailed": "生成关键词失败",
+    "errorInvalidResponseFormat": "返回数据格式不正确",
+    "errorNoKeywordsGenerated": "无法生成关键词，请尝试更具体的关键词描述",
+    "errorGenerationRetry": "生成关键词失败，请重试",
+    "errorNoKeywords": "请先生成或输入关键词",
+    "errorNoTlds": "请选择至少一个TLD",
+    "normalMode": "普通模式",
+    "aiMode": "AI模式",
+    "inputAiDescription": "输入项目描述，AI将生成域名关键词",
+    "inputKeywordsDescription": "输入关键词（逗号分隔）",
+    "aiPlaceholder": "例如：我想创建一个销售手工蛋糕和甜点的在线商店...",
+    "keywordsPlaceholder": "example, test, mydomain",
+    "generating": "生成中...",
+    "generateKeywords": "生成关键词",
+    "updateKeywords": "更新关键词",
+    "currentKeywords": "当前关键词：",
+    "selectTlds": "选择域名后缀",
+    "checking": "检查中...",
+    "checkAvailability": "检查域名可用性"
+  },
+  "TldSelector": {
+    "searchPlaceholder": "搜索 TLD (例如 .com, .shop)",
+    "popularTlds": "常用 TLD",
+    "allTlds": "所有 TLD",
+    "showAllButton": "查看全部 {count} 个 TLD",
+    "hideAllButton": "收起全部 TLD",
+    "noTldsFound": "未找到 TLD。"
   }
 }

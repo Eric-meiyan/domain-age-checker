@@ -13,6 +13,11 @@
     "nav": {
       "items": [
         {
+          "title": "Domain Search",
+          "url": "/domain-search",
+          "icon": "BiSearchAlt"
+        },
+        {
           "title": "Features",
           "url": "/#feature",
           "icon": "HiOutlineSparkles"

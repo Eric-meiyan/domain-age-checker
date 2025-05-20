@@ -13,6 +13,11 @@
     "nav": {
       "items": [
         {
+          "title": "域名搜索",
+          "url": "/zh/domain-search",
+          "icon": "BiSearchAlt"
+        },
+        {
           "title": "功能特点",
           "url": "/#feature",
           "icon": "HiOutlineSparkles"

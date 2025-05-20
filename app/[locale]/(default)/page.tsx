@@ -41,7 +41,7 @@ export default async function LandingPage({
 
   return (
     <>
-      {page.hero && <Hero hero={page.hero} />}
+      <Hero />
       {/* {page.branding && <Branding section={page.branding} />} */}
       {/* {page.introduce && <Feature1 section={page.introduce} />} */}
       {/* {page.benefit && <Feature2 section={page.benefit} />} */}

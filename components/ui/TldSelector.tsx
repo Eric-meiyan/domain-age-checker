@@ -83,7 +83,7 @@ const TldSelector: React.FC<TldSelectorProps> = ({
   };
 
   return (
-    <div className="space-y-4 p-4 border rounded-lg w-full max-w-md mx-auto">
+    <div className="space-y-4 p-3 border rounded-lg w-full">
       <Input
         type="search"
         placeholder={t('searchPlaceholder')}

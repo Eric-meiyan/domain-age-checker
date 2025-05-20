@@ -84,7 +84,8 @@
       "server": "whois.ai",
       "availablePattern": "not registered",
       "enabled": true,
-      "displayName": ".ai"
+      "displayName": ".ai",
+      "isPopular": true
     },
     {
       "name": "ar",
@@ -210,7 +211,8 @@
       "server": "ccwhois.verisign-grs.com",
       "availablePattern": "No match for",
       "enabled": true,
-      "displayName": ".cc"
+      "displayName": ".cc",
+      "isPopular": true
     },
     {
       "name": "cd",
@@ -252,7 +254,8 @@
       "server": "whois.cnnic.net.cn",
       "availablePattern": "No matching record",
       "enabled": true,
-      "displayName": ".cn"
+      "displayName": ".cn",
+      "isPopular": true
     },
     {
       "name": "co",
@@ -882,7 +885,8 @@
       "server": "whois.publicinterestregistry.net",
       "availablePattern": "NOT FOUND",
       "enabled": true,
-      "displayName": ".org"
+      "displayName": ".org",
+      "isPopular": true
     },
     {
       "name": "ovh",

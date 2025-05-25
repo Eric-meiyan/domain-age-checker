@@ -1,6 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
+// Polyfill for URL.canParse (Node.js v20+ feature) for compatibility with Node.js v19
+if (!URL.canParse) {
+  URL.canParse = function(url: string, base?: string): boolean {
+    try {
+      new URL(url, base);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+}
+
 // 初始化OpenAI客户端
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -21,7 +33,7 @@ export async function POST(request: NextRequest) {
 
     // 构建系统提示和用户提示
     const systemPrompt = `你是一个专业的域名关键词生成器。
-请根据用户的描述，生成6个适合用作域名的关键词。
+请根据用户的描述，生成10个适合用作域名的关键词。
 这些关键词应该：
 - 简短且有记忆点
 - 仅包含字母、数字和连字符
@@ -56,7 +68,7 @@ export async function POST(request: NextRequest) {
         .filter(keyword => typeof keyword === 'string')
         .map(keyword => keyword.toLowerCase())
         .filter(keyword => /^[a-z0-9-]+$/.test(keyword))
-        .slice(0, 6); // 确保最多返回6个关键词
+        .slice(0, 10); // 确保最多返回6个关键词
     } catch (error) {
       console.error('解析OpenAI响应失败:', error);
     }

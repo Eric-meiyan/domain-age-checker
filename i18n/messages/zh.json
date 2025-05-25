@@ -141,9 +141,9 @@
     "normalMode": "普通模式",
     "aiMode": "AI模式",
     "inputAiDescription": "输入项目描述，AI将生成域名关键词",
-    "inputKeywordsDescription": "输入关键词（逗号分隔）",
+    "inputKeywordsDescription": "输入关键词（支持逗号、分号、空格分隔）",
     "aiPlaceholder": "例如：我想创建一个销售手工蛋糕和甜点的在线商店...",
-    "keywordsPlaceholder": "example, test, mydomain",
+    "keywordsPlaceholder": "example, test，mydomain；sample site",
     "generating": "生成中...",
     "generateKeywords": "生成关键词",
     "updateKeywords": "更新关键词",
@@ -158,6 +158,10 @@
     "allTlds": "所有 TLD",
     "showAllButton": "查看全部 {count} 个 TLD",
     "hideAllButton": "收起全部 TLD",
-    "noTldsFound": "未找到 TLD。"
+    "noTldsFound": "未找到 TLD。",
+    "loading": "加载 TLD 中...",
+    "errorLoading": "加载 TLD 出错",
+    "warningUsingFallback": "由于连接问题，正在使用备用 TLD 数据",
+    "searchResults": "找到 {count} 个结果"
   }
 }

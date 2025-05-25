@@ -7,7 +7,7 @@ import HappyUsers from "./happy-users";
 import HeroBg from "./bg";
 import Icon from "@/components/icon";
 import Link from "next/link";
-import { DomainCheckResult } from '@/types/domain';
+import { DomainCheckResult, DomainCheckResponse } from '@/types/domain';
 import DomainSearch from './DomainSearch';
 import DomainResults from './DomainResults';
 import { useTranslations } from 'next-intl';
@@ -17,12 +17,16 @@ export default function Hero() {
   const [results, setResults] = useState<DomainCheckResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [stats, setStats] = useState<DomainCheckResponse['stats'] | null>(null);
+  const [queryMethod, setQueryMethod] = useState<'RDAP' | 'WHOIS' | null>(null);
 
   const handleSearch = async (keywords: string[], tlds: string[]) => {
     try {
       setLoading(true);
       setError(null);
       setResults([]);
+      setStats(null);
+      setQueryMethod(null);
 
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 60000);
@@ -49,9 +53,27 @@ export default function Hero() {
         }
       }
 
-      const data = await response.json();
+      const data = await response.json() as DomainCheckResponse;
       if (data.success && Array.isArray(data.results)) {
         setResults(data.results);
+        setQueryMethod(data.method || 'RDAP');
+        
+        // 设置统计信息
+        if (data.stats) {
+          setStats(data.stats);
+        } else {
+          // 如果API未提供统计信息，自行计算
+          const available = data.results.filter(r => r.available).length;
+          const errors = data.results.filter(r => Boolean(r.error)).length;
+          const unavailable = data.results.length - available - errors;
+          
+          setStats({
+            total: data.results.length,
+            available,
+            unavailable,
+            errors
+          });
+        }
         
         if (data.limitApplied) {
           let limitMessage = '';
@@ -65,12 +87,20 @@ export default function Hero() {
           setError(limitMessage);
         }
 
-        const errorsCount = data.results.filter((result: DomainCheckResult) => result.error).length;
-        if (errorsCount > 0) {
-          const totalCount = data.results.length;
-          const errorPercent = Math.round((errorsCount / totalCount) * 100);
+        // 检查错误率
+        if (data.stats?.errors && data.stats.total) {
+          const errorPercent = Math.round((data.stats.errors / data.stats.total) * 100);
           if (errorPercent > 30) {
-            setError(`Note: ${errorsCount} out of ${totalCount} (${errorPercent}%) domain queries failed. This might be due to rate limits or connectivity issues with WHOIS servers.`);
+            setError(`Note: ${data.stats.errors} out of ${data.stats.total} (${errorPercent}%) domain queries failed. This might be due to rate limits or connectivity issues with RDAP servers.`);
+          }
+        } else {
+          const errorsCount = data.results.filter((result: DomainCheckResult) => result.error).length;
+          if (errorsCount > 0) {
+            const totalCount = data.results.length;
+            const errorPercent = Math.round((errorsCount / totalCount) * 100);
+            if (errorPercent > 30) {
+              setError(`Note: ${errorsCount} out of ${totalCount} (${errorPercent}%) domain queries failed. This might be due to rate limits or connectivity issues with RDAP servers.`);
+            }
           }
         }
       } else {
@@ -128,6 +158,36 @@ export default function Hero() {
 
             <div className="mt-12">
               <DomainSearch onSearch={handleSearch} loading={loading} translations={translations} />
+              {stats && results.length > 0 && (
+                <div className="w-full max-w-3xl mx-auto mt-4 bg-slate-50 p-4 rounded-lg">
+                  <div className="flex justify-center gap-5 text-sm">
+                    <div className="flex flex-col items-center">
+                      <span className="font-semibold text-green-600">{stats.available}</span>
+                      <span>Available</span>
+                    </div>
+                    <div className="flex flex-col items-center">
+                      <span className="font-semibold text-red-600">{stats.unavailable}</span>
+                      <span>Taken</span>
+                    </div>
+                    <div className="flex flex-col items-center">
+                      <span className="font-semibold text-amber-600">{stats.errors}</span>
+                      <span>Errors</span>
+                    </div>
+                    <div className="flex flex-col items-center">
+                      <span className="font-semibold">{stats.total}</span>
+                      <span>Total</span>
+                    </div>
+                    {queryMethod && (
+                      <div className="flex flex-col items-center">
+                        <Badge variant="outline" className="font-mono">
+                          {queryMethod}
+                        </Badge>
+                        <span>Protocol</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
               <DomainResults 
                 results={results}
                 loading={loading}

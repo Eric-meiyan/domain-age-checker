@@ -1,4 +1,5 @@
 import "@/app/globals.css";
+import "@/lib/polyfills";
 
 import { getMessages, getTranslations } from "next-intl/server";
 

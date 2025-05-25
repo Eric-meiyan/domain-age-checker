@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { domainCheckService } from '../../../services/DomainCheckService';
+import { processKeywords } from '@/lib/keywordUtils';
 
 // 确保服务已初始化
 let serviceInitialized = false;
@@ -29,12 +30,18 @@ export async function GET() {
       tlds: tlds.map(tld => ({
         name: tld.name,
         displayName: tld.displayName
-      }))
+      })),
+      method: 'RDAP', // 标示使用RDAP方法
+      timestamp: new Date().toISOString()
     });
   } catch (error) {
     console.error('Error fetching TLDs:', error);
     return NextResponse.json(
-      { success: false, error: 'Failed to fetch TLDs' },
+      { 
+        success: false, 
+        error: 'Failed to fetch TLDs',
+        timestamp: new Date().toISOString()
+      },
       { status: 500 }
     );
   }
@@ -42,14 +49,19 @@ export async function GET() {
 
 // 检查域名可用性
 export async function POST(request: NextRequest) {
-  console.log('POST /api/domain-check - Starting domain check');
+  console.log('POST /api/domain-check - Starting domain check using RDAP protocol');
   
   // 统一的错误处理函数，确保返回JSON响应
   const handleError = (error: any, status: number = 500) => {
     const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
     console.error('Error in domain check API:', errorMessage);
     return NextResponse.json(
-      { success: false, error: errorMessage },
+      { 
+        success: false, 
+        error: errorMessage,
+        timestamp: new Date().toISOString(),
+        method: 'RDAP'
+      },
       { status }
     );
   };
@@ -80,18 +92,8 @@ export async function POST(request: NextRequest) {
       return handleError('TLDs are required', 400);
     }
     
-    // 处理关键词，按逗号拆分并清理空格
-    const processedKeywords: string[] = [];
-    
-    body.keywords.forEach((keyword: string) => {
-      if (typeof keyword === 'string') {
-        const splitKeywords = keyword
-          .split(',')
-          .map((k: string) => k.trim())
-          .filter((k: string) => k.length > 0);
-        processedKeywords.push(...splitKeywords);
-      }
-    });
+    // 使用新的关键词处理函数，支持多种分隔符
+    const processedKeywords = processKeywords(body.keywords);
     
     if (processedKeywords.length === 0) {
       console.error('POST /api/domain-check - No valid keywords after processing');
@@ -110,20 +112,54 @@ export async function POST(request: NextRequest) {
     const limitedTlds = body.tlds.slice(0, maxTlds);
     const tldsLimitApplied = body.tlds.length > maxTlds;
     
+    // Track execution time for performance monitoring
+    const startTime = Date.now();
+    
     // 执行域名检查
-    const results = await domainCheckService.checkDomains(limitedKeywords, limitedTlds);
-    
-    console.log(`POST /api/domain-check - Check completed with ${results.length} results`);
-    
-    return NextResponse.json({
-      success: true,
-      results,
-      limitApplied: limitApplied || tldsLimitApplied,
-      totalRequestedKeywords: processedKeywords.length,
-      totalProcessedKeywords: limitedKeywords.length,
-      totalRequestedTlds: body.tlds.length,
-      totalProcessedTlds: limitedTlds.length
-    });
+    try {
+      const results = await domainCheckService.checkDomains(limitedKeywords, limitedTlds);
+      
+      const endTime = Date.now();
+      const executionTime = endTime - startTime;
+      
+      // 计算统计信息
+      const availableDomains = results.filter(r => r.available).length;
+      const unavailableDomains = results.filter(r => !r.available && !r.error).length;
+      const errorDomains = results.filter(r => Boolean(r.error)).length;
+      
+      // Count results by method used
+      const methodStats = results.reduce((acc: Record<string, number>, result) => {
+        const method = result.method || 'Unknown';
+        acc[method] = (acc[method] || 0) + 1;
+        return acc;
+      }, {});
+      
+      console.log(`POST /api/domain-check - Check completed in ${executionTime}ms with ${results.length} results: ${availableDomains} available, ${unavailableDomains} unavailable, ${errorDomains} errors`);
+      console.log(`POST /api/domain-check - Methods used: ${JSON.stringify(methodStats)}`);
+      
+      return NextResponse.json({
+        success: true,
+        method: 'RDAP',
+        results,
+        stats: {
+          total: results.length,
+          available: availableDomains,
+          unavailable: unavailableDomains,
+          errors: errorDomains,
+          methods: methodStats,
+          executionTime
+        },
+        limitApplied: limitApplied || tldsLimitApplied,
+        totalRequestedKeywords: body.keywords.length,
+        totalProcessedKeywords: limitedKeywords.length,
+        totalRequestedTlds: body.tlds.length,
+        totalProcessedTlds: limitedTlds.length,
+        timestamp: new Date().toISOString()
+      });
+    } catch (checkError) {
+      console.error('Error during domain check:', checkError);
+      return handleError(`Domain check failed: ${checkError instanceof Error ? checkError.message : 'Unknown error'}`, 500);
+    }
   } catch (error) {
     return handleError(error);
   }

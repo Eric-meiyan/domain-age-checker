@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import TldSelector from '@/components/ui/TldSelector';
+import { splitKeywords } from '@/lib/keywordUtils';
 
 interface DomainSearchProps {
   onSearch: (keywords: string[], tlds: string[]) => Promise<void>;
@@ -62,10 +63,7 @@ export default function DomainSearch({ onSearch, loading, translations }: Domain
     if (isAiMode) {
       generateKeywordsFromAI(keywordInput);
     } else {
-      const newKeywords = keywordInput
-        .split(',')
-        .map(k => k.trim())
-        .filter(k => k);
+      const newKeywords = splitKeywords(keywordInput);
       
       if (newKeywords.length === 0) {
         setError(translations.errorInvalidKeywords);

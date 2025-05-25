@@ -12,6 +12,7 @@
 - Use next-auth for authentication.
 - Use next-intl for internationalization.
 - Use Stripe for payment.
+- 与我沟通时，用中文
 
 ## File Structure
 

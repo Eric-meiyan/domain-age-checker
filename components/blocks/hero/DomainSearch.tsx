@@ -129,63 +129,102 @@ export default function DomainSearch({ onSearch, loading, translations }: Domain
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto space-y-6">
-      <div className="flex items-center">
+    <div className="w-full max-w-4xl mx-auto space-y-8 p-6 bg-gradient-to-br from-slate-50 to-blue-50 rounded-2xl border border-slate-200 shadow-lg">
+      {/* Mode Selection */}
+      <div className="flex items-center justify-center">
         <RadioGroup 
           defaultValue={isAiMode ? "ai" : "normal"} 
-          className="flex space-x-4"
+          className="flex space-x-6 p-1 bg-white rounded-xl border border-slate-200 shadow-sm"
           onValueChange={(value) => setIsAiMode(value === "ai")}
         >
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="normal" id="normal-mode" />
-            <Label htmlFor="normal-mode">{translations.normalMode}</Label>
+          <div className="flex items-center space-x-3 px-4 py-2 rounded-lg hover:bg-slate-50 transition-colors">
+            <RadioGroupItem value="normal" id="normal-mode" className="border-2 border-slate-300" />
+            <Label htmlFor="normal-mode" className="text-sm font-medium text-slate-700 cursor-pointer">
+              {translations.normalMode}
+            </Label>
           </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="ai" id="ai-mode" />
-            <Label htmlFor="ai-mode">{translations.aiMode}</Label>
+          <div className="flex items-center space-x-3 px-4 py-2 rounded-lg hover:bg-blue-50 transition-colors">
+            <RadioGroupItem value="ai" id="ai-mode" className="border-2 border-blue-300" />
+            <Label htmlFor="ai-mode" className="text-sm font-medium text-blue-700 cursor-pointer">
+              ✨ {translations.aiMode}
+            </Label>
           </div>
         </RadioGroup>
       </div>
 
-      <div className="space-y-2">
-        <label className="text-sm font-medium">
-          {isAiMode 
-            ? translations.inputAiDescription 
-            : translations.inputKeywordsDescription
-          }
-        </label>
-        <Textarea
-          placeholder={isAiMode 
-            ? translations.aiPlaceholder 
-            : translations.keywordsPlaceholder
-          }
-          value={keywordInput}
-          onChange={handleKeywordChange}
-          className="w-full"
-          rows={5}
-        />
+      {/* Input Section */}
+      <div className="space-y-4">
+        <div className="text-center">
+          <label className="text-lg font-semibold text-slate-800 block mb-2">
+            {isAiMode 
+              ? `🤖 ${translations.inputAiDescription}` 
+              : `📝 ${translations.inputKeywordsDescription}`
+            }
+          </label>
+          <p className="text-sm text-slate-600">
+            {isAiMode 
+              ? "Describe your project and let AI generate creative domain keywords for you"
+              : "Enter your keywords separated by commas, semicolons, or spaces"
+            }
+          </p>
+        </div>
+        
+        <div className="relative">
+          <Textarea
+            placeholder={isAiMode 
+              ? translations.aiPlaceholder 
+              : translations.keywordsPlaceholder
+            }
+            value={keywordInput}
+            onChange={handleKeywordChange}
+            className="w-full min-h-[120px] p-4 text-base border-2 border-slate-200 rounded-xl focus:border-blue-400 focus:ring-4 focus:ring-blue-100 transition-all duration-200 resize-none shadow-sm"
+            rows={5}
+          />
+          <div className="absolute bottom-3 right-3 text-xs text-slate-400">
+            {keywordInput.length}/500
+          </div>
+        </div>
       </div>
 
-      <Button
-        variant="outline"
-        onClick={handleUpdateKeywords}
-        disabled={isGenerating || !keywordInput.trim()}
-        className="w-full"
-      >
-        {isGenerating 
-          ? translations.generating 
-          : isAiMode 
-            ? translations.generateKeywords 
-            : translations.updateKeywords
-        }
-      </Button>
+      {/* Generate/Update Button */}
+      <div className="flex justify-center">
+        <Button
+          variant={isAiMode ? "default" : "outline"}
+          onClick={handleUpdateKeywords}
+          disabled={isGenerating || !keywordInput.trim()}
+          className={`px-8 py-3 text-base font-medium rounded-xl transition-all duration-200 ${
+            isAiMode 
+              ? 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transform hover:scale-105' 
+              : 'border-2 border-slate-300 hover:border-slate-400 hover:bg-slate-50'
+          }`}
+        >
+          {isGenerating && (
+            <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
+          )}
+          {isGenerating 
+            ? translations.generating 
+            : isAiMode 
+              ? `✨ ${translations.generateKeywords}` 
+              : translations.updateKeywords
+          }
+        </Button>
+      </div>
 
+      {/* Generated Keywords Display */}
       {keywords.length > 0 && (
-        <div className="space-y-2">
-          <label className="text-sm font-medium">{translations.currentKeywords}</label>
+        <div className="space-y-4 p-6 bg-white rounded-xl border border-slate-200 shadow-sm">
+          <div className="flex items-center space-x-2">
+            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+            <label className="text-base font-semibold text-slate-800">{translations.currentKeywords}</label>
+            <span className="text-sm text-slate-500">({keywords.length} keywords)</span>
+          </div>
           <div className="flex flex-wrap gap-2">
             {keywords.map((keyword, index) => (
-              <Badge key={index} variant="secondary">
+              <Badge 
+                key={index} 
+                variant="secondary" 
+                className="px-3 py-1.5 text-sm font-medium bg-gradient-to-r from-blue-100 to-purple-100 text-blue-800 border border-blue-200 rounded-lg hover:from-blue-200 hover:to-purple-200 transition-colors"
+              >
                 {keyword}
               </Badge>
             ))}
@@ -193,27 +232,50 @@ export default function DomainSearch({ onSearch, loading, translations }: Domain
         </div>
       )}
 
-      <div className="space-y-2">
-        <label className="text-sm font-medium">{translations.selectTlds}</label>
-        <TldSelector 
-          selectedTlds={selectedTlds}
-          onChange={handleTldSelectionChange}
-          maxPopular={12}
-        />
+      {/* TLD Selection */}
+      <div className="space-y-4">
+        <div className="text-center">
+          <label className="text-lg font-semibold text-slate-800 block mb-2">
+            🌐 {translations.selectTlds}
+          </label>
+          <p className="text-sm text-slate-600">
+            Choose the domain extensions you want to check
+          </p>
+        </div>
+        
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <TldSelector 
+            selectedTlds={selectedTlds}
+            onChange={handleTldSelectionChange}
+            maxPopular={12}
+          />
+        </div>
       </div>
 
+      {/* Error Display */}
       {error && (
-        <div className="text-red-500 text-sm">{error}</div>
+        <div className="p-4 bg-red-50 border border-red-200 rounded-xl">
+          <div className="flex items-center space-x-2">
+            <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+            <span className="text-red-700 text-sm font-medium">{error}</span>
+          </div>
+        </div>
       )}
 
-      <Button
-        className="w-full"
-        size="lg"
-        onClick={handleSubmit}
-        disabled={loading || keywords.length === 0 || selectedTlds.length === 0}
-      >
-        {loading ? translations.checking : translations.checkAvailability}
-      </Button>
+      {/* Search Button */}
+      <div className="flex justify-center pt-4">
+        <Button
+          className="px-12 py-4 text-lg font-semibold rounded-xl bg-gradient-to-r from-orange-400 to-pink-500 hover:from-orange-500 hover:to-pink-600 text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:transform-none disabled:shadow-md"
+          size="lg"
+          onClick={handleSubmit}
+          disabled={loading || keywords.length === 0 || selectedTlds.length === 0}
+        >
+          {loading && (
+            <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent mr-3"></div>
+          )}
+          {loading ? translations.checking : `🔍 ${translations.checkAvailability}`}
+        </Button>
+      </div>
     </div>
   );
 } 

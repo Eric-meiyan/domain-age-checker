@@ -1,8 +1,8 @@
 {
   "metadata": {
-    "title": "几小时内构建任何 AI SaaS 创业项目 | ShipAny",
-    "description": "ShipAny 是一个用于构建 AI SaaS 创业项目的 NextJS 模板，提供各种模板和组件，帮助您快速启动。",
-    "keywords": "ShipAny, AI SaaS 模板, NextJS 模板"
+    "title": "AI 域名批量查询与关键词生成 | 您的智能域名助手",
+    "description": "提供强大的域名批量查询工具，并借助 AI 智能生成域名关键词，助您轻松发现和注册理想域名。",
+    "keywords": "域名批量查询, AI 域名生成, 域名关键词, 智能域名搜索, 域名注册, 域名工具"
   },
   "user": {
     "sign_in": "登录",
@@ -121,6 +121,12 @@
     "contact_tip": "其他联系方式",
     "rating_tip": "您对 ShipAny 的看法如何？",
     "placeholder": "在这里留下您的反馈..."
+  },
+  "stats": {
+    "totalViews": "本站总访问量",
+    "totalVisitors": "本站访客数",
+    "viewsUnit": "次",
+    "visitorsUnit": "人"
   },
   "DomainSearch": {
     "findYourPerfectDomain": "寻找您的完美域名",

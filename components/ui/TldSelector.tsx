@@ -165,84 +165,84 @@ const TldSelector: React.FC<TldSelectorProps> = ({
     onChange(newSelected);
   };
 
-  const renderTldList = (tldsToList: Tld[], listContext: string = 'all') => {
-    if (tldsToList.length === 0 && searchTerm) {
-      return <p className="text-sm text-muted-foreground p-4 text-center">{t('noTldsFound')}</p>;
-    }
-    return tldsToList.map(tld => (
-      <div key={`${listContext}-${tld.name}`} className="flex items-center space-x-2 p-2 hover:bg-muted/50 rounded-md">
-        <Checkbox
-          id={`${listContext}-tld-${tld.name}`}
-          checked={selectedTlds.includes(tld.name)}
-          onCheckedChange={() => handleTldToggle(tld.name)}
-          className="shrink-0" // Added for consistent sizing
-        />
-        <label
-          htmlFor={`${listContext}-tld-${tld.name}`}
-          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex-grow cursor-pointer truncate"
-          title={tld.displayName} // Added for better UX on truncated names
-        >
-          {tld.displayName}
-        </label>
-      </div>
-    ));
-  };
-
   if (loading) {
     return (
-      <div className="flex items-center justify-center p-6 border rounded-lg w-full">
-        <Loader2 className="h-6 w-6 animate-spin text-primary" />
-        <span className="ml-2">{t('loading') || 'Loading TLDs...'}</span>
+      <div className="flex flex-col items-center justify-center p-12 bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl border border-slate-200">
+        <div className="relative">
+          <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+          <div className="absolute inset-0 h-8 w-8 rounded-full border-2 border-blue-200 animate-pulse"></div>
+        </div>
+        <span className="mt-4 text-base font-medium text-slate-700">{t('loading') || 'Loading TLDs...'}</span>
+        <span className="mt-1 text-sm text-slate-500">Please wait while we fetch domain extensions</span>
       </div>
     );
   }
 
   if (error && allAvailableTlds.length === 0) {
     return (
-      <div className="p-4 border rounded-lg w-full text-red-500">
-        <p>{t('errorLoading') || 'Error loading TLDs'}: {error}</p>
+      <div className="p-8 bg-red-50 border border-red-200 rounded-xl text-center">
+        <div className="text-4xl mb-4">⚠️</div>
+        <p className="text-red-700 font-medium text-base mb-2">{t('errorLoading') || 'Error loading TLDs'}</p>
+        <p className="text-red-600 text-sm">{error}</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4 p-3 border rounded-lg w-full">
-      <Input
-        type="search"
-        placeholder={t('searchPlaceholder')}
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className="w-full"
-      />
+    <div className="space-y-6 p-6">
+      {/* Search Input */}
+      <div className="relative">
+        <Input
+          type="search"
+          placeholder={t('searchPlaceholder')}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full pl-10 pr-4 py-3 text-base border-2 border-slate-200 rounded-xl focus:border-blue-400 focus:ring-4 focus:ring-blue-100 transition-all duration-200 shadow-sm"
+        />
+        <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400">
+          🔍
+        </div>
+      </div>
 
+      {/* Warning Message */}
       {error && allAvailableTlds.length > 0 && (
-        <div className="px-3 py-2 text-xs bg-yellow-50 text-yellow-700 rounded-md mb-2">
-          {t('warningUsingFallback') || 'Using fallback TLD data due to connection issues'}
+        <div className="px-4 py-3 text-sm bg-amber-50 text-amber-700 rounded-xl border border-amber-200 flex items-center space-x-2">
+          <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
+          <span>{t('warningUsingFallback') || 'Using fallback TLD data due to connection issues'}</span>
         </div>
       )}
 
       {searchTerm === '' ? (
         <>
           {/* Popular TLDs Section */}
-          <div className="space-y-2">
-            <h3 className="text-sm font-semibold text-muted-foreground">{t('popularTlds')}</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          <div className="space-y-4">
+            <div className="flex items-center space-x-2">
+              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+              <h3 className="text-base font-semibold text-slate-800">{t('popularTlds')}</h3>
+              <span className="text-sm text-slate-500">({popularTlds.length} options)</span>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
               {popularTlds.map(tld => (
-                // Using a slightly different rendering for popular TLDs for potentially different styling/layout if needed
-                <div key={`popular-${tld.name}`} className="flex items-center space-x-2 p-1.5 border rounded-md hover:bg-muted/50">
-                  <Checkbox
-                    id={`popular-tld-${tld.name}`}
-                    checked={selectedTlds.includes(tld.name)}
-                    onCheckedChange={() => handleTldToggle(tld.name)}
-                    className="shrink-0"
-                  />
-                  <label
-                    htmlFor={`popular-tld-${tld.name}`}
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex-grow cursor-pointer truncate"
-                    title={tld.displayName}
-                  >
-                    {tld.displayName}
-                  </label>
+                <div key={`popular-${tld.name}`} className="group">
+                  <div className={`flex items-center space-x-3 p-3 border-2 rounded-xl transition-all duration-200 cursor-pointer ${
+                    selectedTlds.includes(tld.name) 
+                      ? 'border-blue-400 bg-blue-50 shadow-md' 
+                      : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                  }`}>
+                    <Checkbox
+                      id={`popular-tld-${tld.name}`}
+                      checked={selectedTlds.includes(tld.name)}
+                      onCheckedChange={() => handleTldToggle(tld.name)}
+                      className="shrink-0"
+                    />
+                    <label
+                      htmlFor={`popular-tld-${tld.name}`}
+                      className="text-sm font-medium leading-none cursor-pointer flex-grow truncate"
+                      title={tld.displayName}
+                    >
+                      {tld.displayName}
+                    </label>
+                  </div>
                 </div>
               ))}
             </div>
@@ -256,13 +256,38 @@ const TldSelector: React.FC<TldSelectorProps> = ({
             value={isAllTldsExpanded ? "all-tlds-item" : ""} 
             onValueChange={(value) => setIsAllTldsExpanded(value === "all-tlds-item")}
           >
-            <AccordionItem value="all-tlds-item">
-              <AccordionTrigger className="text-sm font-semibold hover:no-underline">
-                {isAllTldsExpanded ? t('hideAllButton') : t('showAllButton', { count: allAvailableTlds.length })}
+            <AccordionItem value="all-tlds-item" className="border border-slate-200 rounded-xl overflow-hidden">
+              <AccordionTrigger className="px-4 py-3 text-base font-semibold hover:no-underline bg-slate-50 hover:bg-slate-100 transition-colors">
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-slate-500 rounded-full"></div>
+                  <span>{isAllTldsExpanded ? t('hideAllButton') : t('showAllButton', { count: allAvailableTlds.length })}</span>
+                </div>
               </AccordionTrigger>
-              <AccordionContent className="mt-2">
+              <AccordionContent className="p-4 bg-white">
                 <ScrollArea className="h-[300px] w-full pr-3">
-                  {renderTldList(allSortedTlds, 'all-sorted')}
+                  <div className="space-y-2">
+                    {allSortedTlds.map(tld => (
+                      <div key={`all-sorted-${tld.name}`} className={`flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 cursor-pointer ${
+                        selectedTlds.includes(tld.name) 
+                          ? 'bg-blue-50 border border-blue-200' 
+                          : 'hover:bg-slate-50 border border-transparent'
+                      }`}>
+                        <Checkbox
+                          id={`all-sorted-tld-${tld.name}`}
+                          checked={selectedTlds.includes(tld.name)}
+                          onCheckedChange={() => handleTldToggle(tld.name)}
+                          className="shrink-0"
+                        />
+                        <label
+                          htmlFor={`all-sorted-tld-${tld.name}`}
+                          className="text-sm font-medium leading-none cursor-pointer flex-grow truncate"
+                          title={tld.displayName}
+                        >
+                          {tld.displayName}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
                 </ScrollArea>
               </AccordionContent>
             </AccordionItem>
@@ -270,13 +295,46 @@ const TldSelector: React.FC<TldSelectorProps> = ({
         </>
       ) : (
         // Search Results Section
-        <div className='space-y-2'>
-            <h3 className="text-sm font-semibold text-muted-foreground">
-                {t('searchResults', { count: searchResults.length })}
+        <div className='space-y-4'>
+          <div className="flex items-center space-x-2">
+            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+            <h3 className="text-base font-semibold text-slate-800">
+              {t('searchResults', { count: searchResults.length })}
             </h3>
-            <ScrollArea className="h-[calc(300px+80px)] w-full pr-3"> {/* Increased height for search results */}
-                {renderTldList(searchResults, 'search')}
+          </div>
+          
+          {searchResults.length === 0 ? (
+            <div className="p-8 text-center">
+              <div className="text-4xl mb-4">🔍</div>
+              <p className="text-slate-500 font-medium">{t('noTldsFound')}</p>
+            </div>
+          ) : (
+            <ScrollArea className="h-[380px] w-full pr-3">
+              <div className="space-y-2">
+                {searchResults.map(tld => (
+                  <div key={`search-${tld.name}`} className={`flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 cursor-pointer ${
+                    selectedTlds.includes(tld.name) 
+                      ? 'bg-blue-50 border border-blue-200' 
+                      : 'hover:bg-slate-50 border border-transparent'
+                  }`}>
+                    <Checkbox
+                      id={`search-tld-${tld.name}`}
+                      checked={selectedTlds.includes(tld.name)}
+                      onCheckedChange={() => handleTldToggle(tld.name)}
+                      className="shrink-0"
+                    />
+                    <label
+                      htmlFor={`search-tld-${tld.name}`}
+                      className="text-sm font-medium leading-none cursor-pointer flex-grow truncate"
+                      title={tld.displayName}
+                    >
+                      {tld.displayName}
+                    </label>
+                  </div>
+                ))}
+              </div>
             </ScrollArea>
+          )}
         </div>
       )}
     </div>

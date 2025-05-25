@@ -3,89 +3,44 @@
   "theme": "light",
   "header": {
     "brand": {
-      "title": "ShipAny",
+      "title": "AIDomain",
       "logo": {
         "src": "/logo.png",
-        "alt": "ShipAny"
+        "alt": "AIDomain"
       },
       "url": "/zh"
     },
     "nav": {
       "items": [
-        {
-          "title": "域名搜索",
-          "url": "/zh/domain-search",
-          "icon": "BiSearchAlt"
-        },
-        {
-          "title": "功能特点",
-          "url": "/#feature",
-          "icon": "HiOutlineSparkles"
-        },
-        {
-          "title": "定价",
-          "url": "/#pricing",
-          "icon": "MdPayment"
-        },
-        {
-          "title": "案例展示",
-          "url": "/#showcase",
-          "icon": "BiCube",
-          "children": [
-            {
-              "title": "AI壁纸商店",
-              "description": "AI壁纸生成器",
-              "icon": "MdOutlineWallpaper",
-              "url": "https://aiwallpaper.shop",
-              "target": "_blank"
-            },
-            {
-              "title": "AI封面生成器",
-              "description": "AI封面生成器",
-              "icon": "",
-              "url": "https://aicover.design",
-              "target": "_blank"
-            }
-          ]
-        }
       ]
     },
-    "buttons": [
-      {
-        "title": "获取 ShipAny",
-        "url": "https://shipany.ai",
-        "target": "_blank",
-        "variant": "link",
-        "icon": "RiArrowRightUpLine"
-      }
-    ],
-    "show_sign": true,
+    "show_sign": false,
     "show_theme": false,
     "show_locale": true
   },
   "hero": {
-    "title": "几小时内快速构建 AI 创业项目，而不是几天",
-    "highlight_text": "快速构建",
-    "description": "ShipAny 是一个用于构建 AI SaaS 创业项目的 NextJS 模板。<br/>通过丰富的模板和组件快速启动。",
+    "title": "AI 智能批量查询，轻松找到您的完美域名",
+    "highlight_text": "批量查询",
+    "description": "轻松执行域名批量搜索，让我们的 AI 为您生成相关关键词。<br/>更快、更智能地发现可用域名。",
     "announcement": {
-      "label": "2025",
-      "title": "🎉 新年快乐",
-      "url": "/#pricing"
+      "label": "新功能",
+      "title": "🎉 AI 关键词生成功能上线啦！",
+      "url": "/zh/domain-search"
     },
-    "tip": "🎁 2025年前五折优惠",
+    "tip": "🎁 免费试用我们的 AI 域名助手！",
     "buttons": [
       {
-        "title": "立即开始",
+        "title": "开始 AI 域名搜索",
         "icon": "RiFlashlightFill",
-        "url": "/#pricing",
+        "url": "/zh/domain-search",
         "target": "_self",
         "variant": "default"
       },
       {
-        "title": "加入 Discord",
-        "icon": "RiDiscordFill",
-        "url": "https://discord.gg/HQNnrzjZQS",
-        "target": "_blank",
+        "title": "了解更多",
+        "icon": "RiInformationLine",
+        "url": "/#introduce",
+        "target": "_self",
         "variant": "outline"
       }
     ],
@@ -134,27 +89,27 @@
   },
   "introduce": {
     "name": "introduce",
-    "title": "什么是 ShipAny",
-    "label": "介绍",
-    "description": "ShipAny 是一个用于构建 AI SaaS 创业项目的 NextJS 模板，内置多种模板和组件。",
+    "title": "智能域名发现：批量搜索与 AI 关键词生成",
+    "label": "工作原理",
+    "description": "我们的平台将强大的域名批量检查功能与智能 AI 关键词建议相结合，简化您的域名搜寻过程。",
     "image": {
-      "src": "/imgs/features/1.png"
+      "src": "/imgs/features/domain_search_ai.png"
     },
     "items": [
       {
-        "title": "即用型模板",
-        "description": "从数十个生产就绪的 AI SaaS 模板中选择，快速启动您的项目。",
-        "icon": "RiNextjsFill"
+        "title": "域名批量可用性检查",
+        "description": "一次性即时检查数百个域名的可用性。节省您的时间和精力。",
+        "icon": "RiCheckboxMultipleLine"
       },
       {
-        "title": "基础设施配置",
-        "description": "立即获取内置最佳实践的可扩展基础设施。",
-        "icon": "RiDatabase2Line"
+        "title": "AI 生成关键词创意",
+        "description": "描述您的项目，我们的 AI 将为您的域名提供富有创意且相关的关键词建议。",
+        "icon": "RiLightbulbFlashLine"
       },
       {
-        "title": "快速部署",
-        "description": "在几小时内将您的 AI SaaS 应用部署到生产环境，而不是几天。",
-        "icon": "RiCloudyFill"
+        "title": "流畅的搜索体验",
+        "description": "直观的界面设计，旨在使您的域名搜索和注册过程顺畅高效。",
+        "icon": "RiSearchEyeLine"
       }
     ]
   },
@@ -597,77 +552,17 @@
   "footer": {
     "name": "footer",
     "brand": {
-      "title": "ShipAny",
-      "description": "ShipAny 是一个用于构建 AI SaaS 创业项目的 NextJS 模板。通过丰富的模板和组件快速启动。",
+      "title": "AIDomain",
+      "description": "批量查询域名是否可用，也可以借助 AI 帮助生成域名关键词，快速、高效！",
       "logo": {
         "src": "/logo.png",
-        "alt": "ShipAny"
+        "alt": "AIDomain"
       },
       "url": "/"
     },
-    "copyright": "© 2025 • ShipAny 保留所有权利。",
+    "copyright": "© 2025 • AIDomain 保留所有权利。",
     "nav": {
       "items": [
-        {
-          "title": "关于",
-          "children": [
-            {
-              "title": "功能特点",
-              "url": "/#feature",
-              "target": "_self"
-            },
-            {
-              "title": "案例展示",
-              "url": "/#showcase",
-              "target": "_self"
-            },
-            {
-              "title": "定价",
-              "url": "/#pricing",
-              "target": "_self"
-            }
-          ]
-        },
-        {
-          "title": "资源",
-          "children": [
-            {
-              "title": "文档",
-              "url": "https://docs.shipany.ai",
-              "target": "_blank"
-            },
-            {
-              "title": "组件",
-              "url": "https://shipany.ai/components",
-              "target": "_blank"
-            },
-            {
-              "title": "模板",
-              "url": "https://shipany.ai/templates",
-              "target": "_blank"
-            }
-          ]
-        },
-        {
-          "title": "友情链接",
-          "children": [
-            {
-              "title": "ThinkAny",
-              "url": "https://thinkany.ai",
-              "target": "_blank"
-            },
-            {
-              "title": "HeyBeauty",
-              "url": "https://heybeauty.ai",
-              "target": "_blank"
-            },
-            {
-              "title": "Pagen",
-              "url": "https://pagen.so",
-              "target": "_blank"
-            }
-          ]
-        }
       ]
     },
     "social": {

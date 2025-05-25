@@ -3,64 +3,19 @@
   "theme": "light",
   "header": {
     "brand": {
-      "title": "ShipAny",
+      "title": "AIDomain",
       "logo": {
         "src": "/logo.png",
-        "alt": "ShipAny"
+        "alt": "AIDomain"
       },
       "url": "/"
     },
     "nav": {
       "items": [
-        {
-          "title": "Domain Search",
-          "url": "/domain-search",
-          "icon": "BiSearchAlt"
-        },
-        {
-          "title": "Features",
-          "url": "/#feature",
-          "icon": "HiOutlineSparkles"
-        },
-        {
-          "title": "Pricing",
-          "url": "/#pricing",
-          "icon": "MdPayment"
-        },
-        {
-          "title": "Showcase",
-          "url": "/#showcase",
-          "icon": "BiCube",
-          "children": [
-            {
-              "title": "AI Wallpaper Shop",
-              "description": "AI Wallpaper Generator",
-              "icon": "MdOutlineWallpaper",
-              "url": "https://aiwallpaper.shop",
-              "target": "_blank"
-            },
-            {
-              "title": "AI Cover Generator",
-              "description": "AI Cover Generator",
-              "icon": "",
-              "url": "https://aicover.design",
-              "target": "_blank"
-            }
-          ]
-        }
       ]
     },
-    "buttons": [
-      {
-        "title": "Get ShipAny",
-        "url": "https://shipany.ai",
-        "target": "_blank",
-        "variant": "link",
-        "icon": "RiArrowRightUpLine"
-      }
-    ],
-    "show_sign": true,
-    "show_theme": true,
+    "show_sign": false,
+    "show_theme": false,
     "show_locale": true
   },
   "hero": {
@@ -134,27 +89,27 @@
   },
   "introduce": {
     "name": "introduce",
-    "title": "What is ShipAny",
-    "label": "Introduce",
-    "description": "ShipAny is a NextJS boilerplate for building AI SaaS startups. Built in a variety of templates and components.",
+    "title": "Smart Domain Discovery: Bulk Search & AI Keywords",
+    "label": "How It Works",
+    "description": "Our platform combines powerful bulk domain checking with intelligent AI keyword suggestions to streamline your domain hunting process.",
     "image": {
-      "src": "/imgs/features/1.png"
+      "src": "/imgs/features/domain_search_ai.png"
     },
     "items": [
       {
-        "title": "Ready-to-use Templates",
-        "description": "Choose from dozens of production-ready AI SaaS templates to quickly start your project.",
-        "icon": "RiNextjsFill"
+        "title": "Bulk Domain Availability Check",
+        "description": "Instantly check the availability of hundreds of domain names at once. Save time and effort.",
+        "icon": "RiCheckboxMultipleLine"
       },
       {
-        "title": "Infrastructure Setup",
-        "description": "Get instant access to scalable infrastructure with best practices built-in.",
-        "icon": "RiDatabase2Line"
+        "title": "AI-Generated Keyword Ideas",
+        "description": "Describe your project, and our AI will provide creative and relevant keyword suggestions for your domain.",
+        "icon": "RiLightbulbFlashLine"
       },
       {
-        "title": "Quick Deployment",
-        "description": "Deploy your AI SaaS application to production in hours, not days.",
-        "icon": "RiCloudyFill"
+        "title": "Seamless Search Experience",
+        "description": "An intuitive interface designed to make your domain search and registration process smooth and efficient.",
+        "icon": "RiSearchEyeLine"
       }
     ]
   },
@@ -597,77 +552,17 @@
   "footer": {
     "name": "footer",
     "brand": {
-      "title": "ShipAny",
-      "description": "ShipAny is a NextJS boilerplate for building AI SaaS startups. Ship Fast with a variety of templates and components.",
+      "title": "AIDomain",
+      "description": "Batch query whether domain names are available, or use AI to generate domain keywords quickly and efficiently!",
       "logo": {
         "src": "/logo.png",
-        "alt": "ShipAny"
+        "alt": "AIDomain"
       },
       "url": "/"
     },
-    "copyright": "© 2025 • ShipAny All rights reserved.",
+    "copyright": "© 2025 • AIDomain All rights reserved.",
     "nav": {
       "items": [
-        {
-          "title": "About",
-          "children": [
-            {
-              "title": "Features",
-              "url": "/#feature",
-              "target": "_self"
-            },
-            {
-              "title": "Showcases",
-              "url": "/#showcase",
-              "target": "_self"
-            },
-            {
-              "title": "Pricing",
-              "url": "/#pricing",
-              "target": "_self"
-            }
-          ]
-        },
-        {
-          "title": "Resources",
-          "children": [
-            {
-              "title": "Documents",
-              "url": "https://docs.shipany.ai",
-              "target": "_blank"
-            },
-            {
-              "title": "Components",
-              "url": "https://shipany.ai/components",
-              "target": "_blank"
-            },
-            {
-              "title": "Templates",
-              "url": "https://shipany.ai/templates",
-              "target": "_blank"
-            }
-          ]
-        },
-        {
-          "title": "Friends",
-          "children": [
-            {
-              "title": "ThinkAny",
-              "url": "https://thinkany.ai",
-              "target": "_blank"
-            },
-            {
-              "title": "HeyBeauty",
-              "url": "https://heybeauty.ai",
-              "target": "_blank"
-            },
-            {
-              "title": "Pagen",
-              "url": "https://pagen.so",
-              "target": "_blank"
-            }
-          ]
-        }
       ]
     },
     "social": {

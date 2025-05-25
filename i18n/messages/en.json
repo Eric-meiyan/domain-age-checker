@@ -1,8 +1,8 @@
 {
   "metadata": {
-    "title": "Ship Any AI SaaS Startups in hours | ShipAny",
-    "description": "ShipAny is a NextJS boilerplate for building AI SaaS startups, Ship Fast with a variety of templates and components.",
-    "keywords": "ShipAny, AI SaaS Boilerplate, NextJS Boilerplate"
+    "title": "AI Bulk Domain Search & Keyword Generator | Your Smart Domain Assistant",
+    "description": "Powerful bulk domain search tool with AI-powered keyword generation to help you easily find and register ideal domains.",
+    "keywords": "Bulk Domain Search, AI Domain Generator, Domain Keywords, Smart Domain Search, Domain Registration, Domain Tools"
   },
   "user": {
     "sign_in": "Sign In",
@@ -115,12 +115,18 @@
   },
   "feedback": {
     "title": "Feedback",
-    "description": "We'd love to hear what went well or how we can improve the product experience.",
+    "description": "We'd love to hear your thoughts on the product or how we can improve your experience.",
     "submit": "Submit",
     "loading": "Submitting...",
-    "contact_tip": "Other ways to contact us",
+    "contact_tip": "Other contact methods",
     "rating_tip": "How do you feel about ShipAny?",
-    "placeholder": "Leave your words here..."
+    "placeholder": "Leave your feedback here..."
+  },
+  "stats": {
+    "totalViews": "Total Views",
+    "totalVisitors": "Total Visitors",
+    "viewsUnit": "views",
+    "visitorsUnit": "visitors"
   },
   "DomainSearch": {
     "findYourPerfectDomain": "Find Your Perfect Domain",

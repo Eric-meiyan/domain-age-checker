@@ -151,7 +151,7 @@ export default function Hero() {
       <section className="py-8">
         <div className="container">
           <div className="text-center">
-            <h1 className="mx-auto mb-3 mt-0 max-w-3xl text-balance text-4xl font-bold lg:mb-7 lg:text-7xl">
+            <h1 className="mx-auto mb-3 mt-0 max-w-4xl text-balance text-4xl font-bold lg:mb-7 lg:text-7xl">
               Domain Availability Checker
             </h1>
         

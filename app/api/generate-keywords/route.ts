@@ -15,6 +15,7 @@ if (!URL.canParse) {
 
 // 初始化OpenAI客户端
 const openai = new OpenAI({
+  baseURL: 'https://api.deepseek.com',
   apiKey: process.env.OPENAI_API_KEY,
 });
 
@@ -45,13 +46,13 @@ export async function POST(request: NextRequest) {
 
     // 调用OpenAI API
     const response = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "deepseek-chat",
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: `根据以下描述生成域名关键词: ${prompt}` }
       ],
       temperature: 0.7,
-      max_tokens: 150,
+      max_tokens: 1000,
       response_format: { type: "json_object" },
     });
 

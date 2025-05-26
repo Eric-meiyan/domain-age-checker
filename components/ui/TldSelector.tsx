@@ -298,7 +298,7 @@ const TldSelector: React.FC<TldSelectorProps> = ({
         <div className='space-y-4'>
           <div className="flex items-center space-x-2">
             <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-            <h3 className="text-base font-semibold text-slate-800">
+            <h3 className="text-base font-semibold text-slate-800 text-left">
               {t('searchResults', { count: searchResults.length })}
             </h3>
           </div>

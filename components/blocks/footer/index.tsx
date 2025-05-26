@@ -39,19 +39,7 @@ export default function Footer({ footer }: { footer: FooterType }) {
                   )}
                 </div>
               )}
-              {footer.social && (
-                <ul className="flex items-center space-x-6 text-muted-foreground">
-                  {footer.social.items?.map((item, i) => (
-                    <li key={i} className="font-medium hover:text-primary">
-                      <a href={item.url} target={item.target}>
-                        {item.icon && (
-                          <Icon name={item.icon} className="size-4" />
-                        )}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              )}
+            
             </div>
             <div className="grid grid-cols-3 gap-6 lg:gap-20">
               {footer.nav?.items?.map((item, i) => (

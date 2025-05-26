@@ -129,9 +129,9 @@ export default function DomainSearch({ onSearch, loading, translations }: Domain
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-8 p-6 bg-gradient-to-br from-slate-50 to-blue-50 rounded-2xl border border-slate-200 shadow-lg">
+    <div className="w-full max-w-4xl mx-auto space-y-8 p-8 bg-white/80 backdrop-blur-sm rounded-2xl border border-slate-200/60 shadow-sm ring-1 ring-slate-900/5">
       {/* Mode Selection */}
-      <div className="flex items-center justify-center">
+      <div className="flex items-center justify-left">
         <RadioGroup 
           defaultValue={isAiMode ? "ai" : "normal"} 
           className="flex space-x-6 p-1 bg-white rounded-xl border border-slate-200 shadow-sm"
@@ -161,12 +161,7 @@ export default function DomainSearch({ onSearch, loading, translations }: Domain
               : `📝 ${translations.inputKeywordsDescription}`
             }
           </label>
-          <p className="text-sm text-slate-600">
-            {isAiMode 
-              ? "Describe your project and let AI generate creative domain keywords for you"
-              : "Enter your keywords separated by commas, semicolons, or spaces"
-            }
-          </p>
+          
         </div>
         
         <div className="relative">
@@ -177,7 +172,7 @@ export default function DomainSearch({ onSearch, loading, translations }: Domain
             }
             value={keywordInput}
             onChange={handleKeywordChange}
-            className="w-full min-h-[120px] p-4 text-base border-2 border-slate-200 rounded-xl focus:border-blue-400 focus:ring-4 focus:ring-blue-100 transition-all duration-200 resize-none shadow-sm"
+            className="w-full min-h-[120px] p-4 text-base border-2 border-slate-200 rounded-xl   transition-all duration-200 resize-none shadow-sm"
             rows={5}
           />
           <div className="absolute bottom-3 right-3 text-xs text-slate-400">
@@ -238,9 +233,7 @@ export default function DomainSearch({ onSearch, loading, translations }: Domain
           <label className="text-lg font-semibold text-slate-800 block mb-2">
             🌐 {translations.selectTlds}
           </label>
-          <p className="text-sm text-slate-600">
-            Choose the domain extensions you want to check
-          </p>
+          
         </div>
         
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">

@@ -42,3 +42,4 @@ Makefile
 .wrangler
 wrangler.toml
 supabase
+rdap-cache.json

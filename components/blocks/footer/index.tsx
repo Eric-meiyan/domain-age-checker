@@ -64,6 +64,12 @@ export default function Footer({ footer }: { footer: FooterType }) {
                 <p>
                   {footer.copyright}
                   {process.env.NEXT_PUBLIC_SHOW_POWERED_BY === "false" ? null : (
+                    <>
+                      <span className="text-muted-foreground"> | </span>
+                      <a href="mailto:eric.wuyu1352@gmail.com" >
+                        eric.wuyu1352@gmail.com
+                      </a>  
+                      <span className="text-muted-foreground"> |</span>
                     <a
                       href="https://shipany.ai"
                       target="_blank"
@@ -71,6 +77,7 @@ export default function Footer({ footer }: { footer: FooterType }) {
                     >
                       build with ShipAny
                     </a>
+                    </>
                   )}
                 </p>
               )}

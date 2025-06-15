@@ -181,4 +181,8 @@ export const authOptions: NextAuthConfig = {
       }
     },
   },
+  session: {
+    strategy: "jwt",
+    maxAge: 1 * 60 * 60, // 设置为1天（以秒为单位）
+  }
 };

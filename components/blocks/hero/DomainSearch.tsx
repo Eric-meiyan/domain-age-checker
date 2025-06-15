@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -45,6 +45,28 @@ export default function DomainSearch({ onSearch, loading, translations }: Domain
   const [isAiMode, setIsAiMode] = useState(false);
   const [keywords, setKeywords] = useState<string[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [usageInfo, setUsageInfo] = useState<{
+    currentUsage: number;
+    limit: number;
+    remaining: number;
+    isGuest: boolean;
+    message: string;
+  } | null>(null);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+  const errorRef = useRef<HTMLDivElement>(null);
+
+  // 当错误状态改变时，自动滚动到错误提示位置
+  useEffect(() => {
+    if (error && errorRef.current) {
+      // 延迟一点时间确保DOM已更新
+      setTimeout(() => {
+        errorRef.current?.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'center' 
+        });
+      }, 100);
+    }
+  }, [error]);
 
   const handleKeywordChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setKeywordInput(e.target.value);
@@ -75,6 +97,16 @@ export default function DomainSearch({ onSearch, loading, translations }: Domain
     }
   };
 
+  // 获取或生成会话ID
+  const getSessionId = () => {
+    let sessionId = localStorage.getItem('guest-session-id');
+    if (!sessionId) {
+      sessionId = 'guest-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+      localStorage.setItem('guest-session-id', sessionId);
+    }
+    return sessionId;
+  };
+
   const generateKeywordsFromAI = async (prompt: string) => {
     try {
       setIsGenerating(true);
@@ -85,6 +117,7 @@ export default function DomainSearch({ onSearch, loading, translations }: Domain
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'X-Session-Id': getSessionId(), // 添加会话ID
         },
         body: JSON.stringify({ prompt }),
       });
@@ -92,6 +125,15 @@ export default function DomainSearch({ onSearch, loading, translations }: Domain
       const data = await response.json();
       
       if (!response.ok) {
+        if (data.code === 'USAGE_LIMIT_EXCEEDED') {
+          // 使用次数超限的特殊处理
+          setError(data.error);
+          if (data.isGuest) {
+            // 显示登录提示
+            setShowLoginPrompt(true);
+          }
+          return;
+        }
         throw new Error(data.error || translations.errorGenerationFailed);
       }
       
@@ -105,6 +147,12 @@ export default function DomainSearch({ onSearch, loading, translations }: Domain
       }
       
       setKeywords(data.keywords);
+      
+      // 更新使用情况信息
+      if (data.usage) {
+        setUsageInfo(data.usage);
+      }
+      
     } catch (err) {
       setError(err instanceof Error ? err.message : translations.errorGenerationRetry);
       console.error('AI keyword generation error:', err);
@@ -182,7 +230,7 @@ export default function DomainSearch({ onSearch, loading, translations }: Domain
       </div>
 
       {/* Generate/Update Button */}
-      <div className="flex justify-center">
+      <div className="flex justify-center items-end space-x-4">
         <Button
           variant={isAiMode ? "default" : "outline"}
           onClick={handleUpdateKeywords}
@@ -203,6 +251,13 @@ export default function DomainSearch({ onSearch, loading, translations }: Domain
               : translations.updateKeywords
           }
         </Button>
+        
+        {/* 使用次数显示 */}
+        {isAiMode && usageInfo && (
+          <span className="text-sm text-gray-600">
+            （剩余 {usageInfo.remaining}/{usageInfo.limit} 次）
+          </span>
+        )}
       </div>
 
       {/* Generated Keywords Display */}
@@ -247,7 +302,7 @@ export default function DomainSearch({ onSearch, loading, translations }: Domain
 
       {/* Error Display */}
       {error && (
-        <div className="p-4 bg-red-50 border border-red-200 rounded-xl">
+        <div ref={errorRef} className="p-4 bg-red-50 border border-red-200 rounded-xl">
           <div className="flex items-center space-x-2">
             <div className="w-2 h-2 bg-red-500 rounded-full"></div>
             <span className="text-red-700 text-sm font-medium">{error}</span>

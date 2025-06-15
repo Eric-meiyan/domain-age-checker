@@ -1,5 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
+import { 
+  checkUsageLimit, 
+  recordUsage, 
+  KEYWORD_GENERATION_LIMITS 
+} from '@/services/aiUsageLimit';
+import { ServiceType } from '@/models/aiUsage';
 
 // Polyfill for URL.canParse (Node.js v20+ feature) for compatibility with Node.js v19
 if (!URL.canParse) {
@@ -21,7 +27,27 @@ const openai = new OpenAI({
 
 export async function POST(request: NextRequest) {
   try {
-    // 解析请求体
+    // 1. 检查使用限制
+    const usageCheck = await checkUsageLimit(
+      ServiceType.KeywordGeneration,
+      KEYWORD_GENERATION_LIMITS
+    );
+
+    if (!usageCheck.allowed) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: usageCheck.message,
+          code: 'USAGE_LIMIT_EXCEEDED',
+          currentUsage: usageCheck.currentUsage,
+          limit: usageCheck.limit,
+          isGuest: usageCheck.isGuest
+        },
+        { status: 429 } // Too Many Requests
+      );
+    }
+
+    // 2. 解析请求体
     const body = await request.json();
     const { prompt } = body;
 
@@ -32,7 +58,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 构建系统提示和用户提示
+    // 3. 构建系统提示和用户提示
     const systemPrompt = `你是一个专业的域名关键词生成器。
 请根据用户的描述，生成10个适合用作域名的关键词。
 这些关键词应该：
@@ -44,7 +70,7 @@ export async function POST(request: NextRequest) {
 
 请只返回关键词本身，用JSON数组格式，不要有任何其他解释或描述。`;
 
-    // 调用OpenAI API
+    // 4. 调用OpenAI API
     const response = await openai.chat.completions.create({
       model: "deepseek-chat",
       messages: [
@@ -56,7 +82,7 @@ export async function POST(request: NextRequest) {
       response_format: { type: "json_object" },
     });
 
-    // 解析返回的内容
+    // 5. 解析返回的内容
     const content = response.choices[0]?.message?.content || '{"keywords":[]}';
     let keywords: string[] = [];
 
@@ -69,12 +95,33 @@ export async function POST(request: NextRequest) {
         .filter(keyword => typeof keyword === 'string')
         .map(keyword => keyword.toLowerCase())
         .filter(keyword => /^[a-z0-9-]+$/.test(keyword))
-        .slice(0, 10); // 确保最多返回6个关键词
+        .slice(0, 10); // 确保最多返回10个关键词
     } catch (error) {
       console.error('解析OpenAI响应失败:', error);
     }
 
-    return NextResponse.json({ success: true, keywords });
+    // 6. 记录使用次数（只有成功生成关键词才记录）
+    if (keywords.length > 0) {
+      await recordUsage(ServiceType.KeywordGeneration);
+    }
+
+    // 7. 返回结果，包含使用情况信息
+    const updatedUsageCheck = await checkUsageLimit(
+      ServiceType.KeywordGeneration,
+      KEYWORD_GENERATION_LIMITS
+    );
+
+    return NextResponse.json({ 
+      success: true, 
+      keywords,
+      usage: {
+        currentUsage: updatedUsageCheck.currentUsage,
+        limit: updatedUsageCheck.limit,
+        remaining: updatedUsageCheck.limit - updatedUsageCheck.currentUsage,
+        isGuest: updatedUsageCheck.isGuest,
+        message: updatedUsageCheck.message
+      }
+    });
   } catch (error) {
     console.error('生成关键词时出错:', error);
     return NextResponse.json(

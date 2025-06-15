@@ -35,6 +35,12 @@ export default async function ({ children }: { children: ReactNode }) {
           is_active: false,
         },
         {
+          title: "AI 使用统计",
+          url: "/ai-usage",
+          icon: "RiBarChartLine",
+          is_active: false,
+        },
+        {
           title: t("api_keys.title"),
           url: "/api-keys",
           icon: "RiKey2Line",

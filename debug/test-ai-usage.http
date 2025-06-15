@@ -1,0 +1,65 @@
+@baseUrl = http://localhost:3000
+@apiKey = sk-xxx
+
+### 测试未登录用户生成关键词（第1次）
+POST {{baseUrl}}/api/generate-keywords
+Content-Type: application/json
+X-Session-Id: test-session-123
+
+{
+  "prompt": "我想创建一个在线蛋糕店"
+}
+
+### 测试未登录用户生成关键词（第2次）
+POST {{baseUrl}}/api/generate-keywords
+Content-Type: application/json
+X-Session-Id: test-session-123
+
+{
+  "prompt": "我想创建一个在线蛋糕店"
+}
+
+### 测试未登录用户生成关键词（第3次）
+POST {{baseUrl}}/api/generate-keywords
+Content-Type: application/json
+X-Session-Id: test-session-123
+
+{
+  "prompt": "我想创建一个在线蛋糕店"
+}
+
+### 测试未登录用户生成关键词（第4次）
+POST {{baseUrl}}/api/generate-keywords
+Content-Type: application/json
+X-Session-Id: test-session-123
+
+{
+  "prompt": "我想创建一个在线蛋糕店"
+}
+
+### 测试未登录用户生成关键词（第5次）
+POST {{baseUrl}}/api/generate-keywords
+Content-Type: application/json
+X-Session-Id: test-session-123
+
+{
+  "prompt": "我想创建一个在线蛋糕店"
+}
+
+### 测试未登录用户生成关键词（第6次 - 应该被限制）
+POST {{baseUrl}}/api/generate-keywords
+Content-Type: application/json
+X-Session-Id: test-session-123
+
+{
+  "prompt": "我想创建一个在线蛋糕店"
+}
+
+### 测试登录用户生成关键词
+POST {{baseUrl}}/api/generate-keywords
+Content-Type: application/json
+Authorization: Bearer {{apiKey}}
+
+{
+  "prompt": "我想创建一个在线蛋糕店"
+} 

@@ -42,22 +42,27 @@ export class DomainCheckService {
     try {
       console.log('Initializing Domain Check Service...');
       
-      // 1. 尝试加载缓存数据
-      const cacheLoaded = await this.loadCachedRdapData();
-      console.log(`Cache loaded: ${cacheLoaded ? 'Yes' : 'No'}`);
-      
-      // 2. 确保关键TLD有RDAP服务器
-      this.ensureCriticalTlds();
+          // 1. 尝试加载缓存数据
+    const cacheLoaded = await this.loadCachedRdapData();
+    console.log(`Cache loaded: ${cacheLoaded ? 'Yes' : 'No'}`);
+    console.log(`lastUpdateTime after cache load: ${this.lastUpdateTime}`);
+    console.log(`RDAP server map size after cache load: ${this.rdapServerMap.size}`);
+    
+    // 2. 确保关键TLD有RDAP服务器
+    this.ensureCriticalTlds();
+    console.log(`RDAP server map size after ensureCriticalTlds: ${this.rdapServerMap.size}`);
       
       // 3. 设置定期更新任务
       this.schedulePeriodicUpdate();
       
-      // 4. 检查是否需要立即更新数据
-      if (!cacheLoaded || this.isCacheStale()) {
-        console.log('Cache is stale or missing, updating RDAP data...');
-        // 启动时更新，但使用较短超时
-        this.updateRdapData(true);
-      }
+          // 4. 检查是否需要立即更新数据
+    if (!cacheLoaded || this.isCacheStale()) {
+      console.log('Cache is stale or missing, updating RDAP data...');
+      // 启动时更新，但使用较短超时 - 添加 await！
+      const updateSuccess = await this.updateRdapData(true);
+      console.log(`RDAP update completed: ${updateSuccess ? 'Success' : 'Failed'}`);
+      console.log(`RDAP server map size after update: ${this.rdapServerMap.size}`);
+    }
       
       // 5. 从RDAP服务器信息生成tldConfigs（为了兼容性）
       this.generateTldConfigsFromRdap();
@@ -99,6 +104,12 @@ export class DomainCheckService {
    * 检查缓存是否过期
    */
   private isCacheStale(): boolean {
+    // 如果从未更新过，应该被认为是过期的
+    if (this.lastUpdateTime === 0) {
+      console.log('Cache is stale: never updated (lastUpdateTime = 0)');
+      return true;
+    }
+    
     const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
     const age = Date.now() - this.lastUpdateTime;
     const isStale = age > THIRTY_DAYS_MS;

@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
     const limitApplied = processedKeywords.length > maxKeywords;
     
     // 限制TLD数量
-    const maxTlds = 10; // 设置TLD数量上限
+    const maxTlds = 40; // 设置TLD数量上限
     const limitedTlds = body.tlds.slice(0, maxTlds);
     const tldsLimitApplied = body.tlds.length > maxTlds;
     

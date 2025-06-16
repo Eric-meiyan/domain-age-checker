@@ -4,8 +4,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
-// Button component is not used in the current version, can be removed if not planned for future use
-// import { Button } from '@/components/ui/button'; 
+import { Button } from '@/components/ui/button'; 
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Loader2 } from 'lucide-react';
@@ -165,6 +164,28 @@ const TldSelector: React.FC<TldSelectorProps> = ({
     onChange(newSelected);
   };
 
+  // 添加全选功能
+  const handleSelectAllPopular = () => {
+    const popularTldNames = popularTlds.map(tld => tld.name);
+    const allSelected = popularTldNames.every(name => selectedTlds.includes(name));
+    
+    if (allSelected) {
+      // 如果已全选，则取消选择所有热门TLD
+      const newSelected = selectedTlds.filter(name => !popularTldNames.includes(name));
+      onChange(newSelected);
+    } else {
+      // 如果未全选，则选中所有热门TLD
+      const newSelected = [...new Set([...selectedTlds, ...popularTldNames])];
+      onChange(newSelected);
+    }
+  };
+
+  // 检查是否已全选热门TLD
+  const isAllPopularSelected = useMemo(() => {
+    const popularTldNames = popularTlds.map(tld => tld.name);
+    return popularTldNames.length > 0 && popularTldNames.every(name => selectedTlds.includes(name));
+  }, [popularTlds, selectedTlds]);
+
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center p-12 bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl border border-slate-200">
@@ -216,10 +237,26 @@ const TldSelector: React.FC<TldSelectorProps> = ({
         <>
           {/* Popular TLDs Section */}
           <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-              <h3 className="text-base font-semibold text-slate-800">{t('popularTlds')}</h3>
-              <span className="text-sm text-slate-500">({popularTlds.length} options)</span>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                <h3 className="text-base font-semibold text-slate-800">{t('popularTlds')}</h3>
+                <span className="text-sm text-slate-500">({popularTlds.length} options)</span>
+              </div>
+              
+              {/* 全选按钮 */}
+              <Button
+                variant={isAllPopularSelected ? "default" : "outline"}
+                size="sm"
+                onClick={handleSelectAllPopular}
+                className={`text-sm font-medium transition-all duration-200 ${
+                  isAllPopularSelected 
+                    ? 'bg-blue-600 hover:bg-blue-700 text-white' 
+                    : 'border-blue-300 text-blue-600 hover:bg-blue-50 hover:border-blue-400'
+                }`}
+              >
+                {isAllPopularSelected ? '✓ 已全选' : '全选'}
+              </Button>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
               {popularTlds.map(tld => (

@@ -45,3 +45,17 @@ Authorization: Bearer {{apiKey}}
   "provider": "openrouter",
   "model": "deepseek/deepseek-r1"
 }
+
+### get TLDs
+GET {{baseUrl}}/api/domains/tlds
+Content-Type: application/json
+
+### check domains availability  
+POST {{baseUrl}}/api/domain-check
+Content-Type: application/json
+
+{
+  "keywords": ["test", "example"],
+  "tlds": ["com", "net", "org"]
+}
+

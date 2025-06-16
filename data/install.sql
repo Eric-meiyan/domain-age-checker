@@ -102,3 +102,20 @@ CREATE TABLE feedbacks (
     content TEXT,
     rating INT
 );
+
+
+-- 添加到 data/install.sql
+CREATE TABLE ai_usage_records (
+    id SERIAL PRIMARY KEY,
+    user_uuid VARCHAR(255), -- 登录用户的UUID，未登录用户为NULL
+    session_id VARCHAR(255), -- 未登录用户的会话标识
+    ip_address VARCHAR(255), -- IP地址作为备用标识
+    service_type VARCHAR(50) NOT NULL, -- 服务类型：'keyword_generation'
+    created_at timestamptz DEFAULT NOW(),
+    user_agent TEXT -- 用户代理信息
+);
+
+-- 创建索引提高查询性能
+CREATE INDEX idx_ai_usage_user_uuid ON ai_usage_records(user_uuid);
+CREATE INDEX idx_ai_usage_session_id ON ai_usage_records(session_id);
+CREATE INDEX idx_ai_usage_ip_created ON ai_usage_records(ip_address, created_at);

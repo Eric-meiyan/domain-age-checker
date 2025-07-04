@@ -76,6 +76,7 @@ npm run cf:deploy
 - [ShipAny AI SaaS Boilerplate License Agreement](LICENSE)
 
 待完成：
+9、让 ai 给出域名组合建议
 6、打印日志
 1、页面继续修改，修改 logo、header、footer、修改颜色
 2、调试查询接口，不能总是出错

@@ -43,3 +43,5 @@ Makefile
 wrangler.toml
 supabase
 rdap-cache.json
+
+*.myself.md

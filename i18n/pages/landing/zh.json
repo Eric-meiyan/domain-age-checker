@@ -12,6 +12,11 @@
     },
     "nav": {
       "items": [
+        {
+          "title": "域名年龄查询",
+          "url": "/zh/domain-age-checker",
+          "target": "_self"
+        }
       ]
     },
     "show_sign": true,

@@ -9,11 +9,16 @@ html {
 }
 
 @layer base {
+  :root {
+    --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+  
   * {
     @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-sans);
   }
 
   :root {

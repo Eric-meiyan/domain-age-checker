@@ -13,6 +13,45 @@
     "user_center": "用户中心",
     "admin_system": "管理后台"
   },
+  "domain_age_checker": {
+    "title": "域名年龄检查工具",
+    "description": "查询域名的注册时间、年龄和到期时间",
+    "input_title": "输入域名",
+    "input_description": "每行输入一个完整域名（如：example.com），最多支持10个域名",
+    "input_placeholder": "example.com\ngoogle.com\ngithub.com",
+    "button_search": "查询域名年龄",
+    "button_searching": "查询中...",
+    "results_title": "查询结果",
+    "results_description": "共查询到 {count} 个已注册域名的信息",
+    "registration_date": "注册时间",
+    "expiration_date": "到期时间",
+    "last_changed": "最后修改",
+    "about_title": "关于域名年龄检查",
+    "about_description": "域名年龄检查工具可以帮助您了解域名的注册历史和基本信息。我们使用现代化的RDAP协议来获取准确的域名注册数据。",
+    "features_title": "主要功能",
+    "features": [
+      "查询域名的确切注册时间",
+      "计算域名的准确年龄（年、月、天）",
+      "显示域名的到期时间",
+      "获取域名的最后修改时间",
+      "支持批量查询多个域名"
+    ],
+    "usage_title": "使用说明",
+    "usage": [
+      "每行输入一个完整的域名（包含顶级域名）",
+      "支持各种常见的顶级域名：.com、.org、.net、.io等",
+      "最多可同时查询10个域名",
+      "只显示已注册域名的信息",
+      "数据来源于官方RDAP服务器，保证准确性"
+    ],
+    "why_important_title": "为什么域名年龄很重要？",
+    "why_important_description": "域名年龄是衡量网站可信度和SEO价值的重要指标。较老的域名通常具有更好的搜索引擎排名潜力，也更容易获得用户和搜索引擎的信任。了解竞争对手域名的注册时间，可以帮助您制定更好的SEO策略。",
+    "error_min_domains": "请输入至少一个域名",
+    "error_invalid_domain": "无效的域名格式",
+    "error_api_failed": "API请求失败",
+    "error_query_failed": "查询失败",
+    "error_occurred": "查询过程中发生错误"
+  },
   "sign_modal": {
     "sign_in_title": "登录",
     "sign_in_description": "登录您的账户",

@@ -4,17 +4,17 @@ import "@/lib/polyfills";
 import { getMessages, getTranslations } from "next-intl/server";
 
 import { AppContextProvider } from "@/contexts/app";
-import { Inter as FontSans } from "next/font/google";
+// import { Inter as FontSans } from "next/font/google";
 import { Metadata } from "next";
 import { NextAuthSessionProvider } from "@/auth/session";
 import { NextIntlClientProvider } from "next-intl";
 import { ThemeProvider } from "@/providers/theme";
 import { cn } from "@/lib/utils";
 
-const fontSans = FontSans({
-  subsets: ["latin"],
+// 使用系统默认字体，避免Google Fonts连接问题
+const fontSans = {
   variable: "--font-sans",
-});
+};
 
 export async function generateMetadata({
   params,

@@ -6,6 +6,10 @@ export interface DomainCheckResult {
   error?: string;
   rdapData?: any; // RDAP查询返回的完整数据
   method?: 'RDAP' | 'WHOIS'; // 表示使用的查询方法
+  registrationDate?: string; // 注册时间
+  expirationDate?: string; // 到期时间
+  lastChangedDate?: string; // 最后修改时间
+  domainAge?: number; // 域名年龄(天数)
 }
 
 export interface DomainCheckResponse {

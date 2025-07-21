@@ -13,6 +13,45 @@
     "user_center": "User Center",
     "admin_system": "Admin System"
   },
+  "domain_age_checker": {
+    "title": "Domain Age Checker Tool",
+    "description": "Check domain registration date, age, and expiration time",
+    "input_title": "Enter Domains",
+    "input_description": "Enter one full domain per line (e.g., example.com), supports up to 10 domains",
+    "input_placeholder": "example.com\ngoogle.com\ngithub.com",
+    "button_search": "Check Domain Age",
+    "button_searching": "Checking...",
+    "results_title": "Query Results",
+    "results_description": "Found information for {count} registered domains",
+    "registration_date": "Registration Date",
+    "expiration_date": "Expiration Date", 
+    "last_changed": "Last Changed",
+    "about_title": "About Domain Age Checker",
+    "about_description": "Domain Age Checker tool helps you understand domain registration history and basic information. We use modern RDAP protocol to obtain accurate domain registration data.",
+    "features_title": "Main Features",
+    "features": [
+      "Query exact domain registration time",
+      "Calculate accurate domain age (years, months, days)",
+      "Display domain expiration time",
+      "Get domain last modification time",
+      "Support bulk query of multiple domains"
+    ],
+    "usage_title": "Usage Instructions",
+    "usage": [
+      "Enter one complete domain per line (including TLD)",
+      "Support various common TLDs: .com, .org, .net, .io, etc.",
+      "Query up to 10 domains simultaneously",
+      "Only display information for registered domains",
+      "Data from official RDAP servers ensures accuracy"
+    ],
+    "why_important_title": "Why is Domain Age Important?",
+    "why_important_description": "Domain age is an important indicator of website credibility and SEO value. Older domains usually have better search engine ranking potential and are more likely to gain trust from users and search engines. Understanding competitor domain registration times can help you develop better SEO strategies.",
+    "error_min_domains": "Please enter at least one domain",
+    "error_invalid_domain": "Invalid domain format",
+    "error_api_failed": "API request failed",
+    "error_query_failed": "Query failed",
+    "error_occurred": "An error occurred during query"
+  },
   "sign_modal": {
     "sign_in_title": "Sign In",
     "sign_in_description": "Sign in to your account",

@@ -506,6 +506,59 @@ export class DomainCheckService {
   }
   
   /**
+   * 解析RDAP响应中的时间信息
+   */
+  private parseRdapTimeData(rdapData: any): {
+    registrationDate?: string;
+    expirationDate?: string;
+    lastChangedDate?: string;
+    domainAge?: number;
+  } {
+    const result: {
+      registrationDate?: string;
+      expirationDate?: string;
+      lastChangedDate?: string;
+      domainAge?: number;
+    } = {};
+
+    if (!rdapData || !rdapData.events) {
+      return result;
+    }
+
+    // 解析events数组中的时间信息
+    rdapData.events.forEach((event: any) => {
+      if (!event.eventAction || !event.eventDate) return;
+
+      switch (event.eventAction.toLowerCase()) {
+        case 'registration':
+          result.registrationDate = event.eventDate;
+          break;
+        case 'expiration':
+          result.expirationDate = event.eventDate;
+          break;
+        case 'last changed':
+        case 'last update':
+          result.lastChangedDate = event.eventDate;
+          break;
+      }
+    });
+
+    // 计算域名年龄
+    if (result.registrationDate) {
+      try {
+        const regDate = new Date(result.registrationDate);
+        const now = new Date();
+        const diffTime = now.getTime() - regDate.getTime();
+        result.domainAge = Math.floor(diffTime / (1000 * 60 * 60 * 24)); // 转换为天数
+      } catch (error) {
+        console.warn('Error calculating domain age:', error);
+      }
+    }
+
+    return result;
+  }
+
+  /**
    * 使用RDAP协议检查单个域名的可用性
    */
   private async checkSingleDomainRdap(
@@ -568,13 +621,17 @@ export class DomainCheckService {
               console.warn(`Error parsing RDAP JSON for ${domain}:`, jsonError);
             }
             
+            // 解析RDAP时间数据
+            const timeData = this.parseRdapTimeData(rdapData);
+            
             return {
               domain,
               tld,
               available: false,
               timestamp: Date.now(),
               rdapData,
-              method: 'RDAP'
+              method: 'RDAP',
+              ...timeData
             };
           } else {
             // Other status codes are treated as errors

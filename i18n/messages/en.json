@@ -14,7 +14,7 @@
     "admin_system": "Admin System"
   },
   "domain_age_checker": {
-    "title": "Domain Age Checker Tool",
+    "title": "Domain Age Checker",
     "description": "Check domain registration date, age, and expiration time",
     "input_title": "Enter Domains",
     "input_description": "Enter one full domain per line (e.g., example.com), supports up to 10 domains",
@@ -27,7 +27,7 @@
     "expiration_date": "Expiration Date", 
     "last_changed": "Last Changed",
     "about_title": "About Domain Age Checker",
-    "about_description": "Domain Age Checker tool helps you understand domain registration history and basic information. We use modern RDAP protocol to obtain accurate domain registration data.",
+    "about_description": "Domain Age Checker helps you understand domain registration history and basic information. We use modern RDAP protocol to obtain accurate domain registration data.",
     "features_title": "Main Features",
     "features": [
       "Query exact domain registration time",

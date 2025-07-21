@@ -70,13 +70,7 @@ export default function Footer({ footer }: { footer: FooterType }) {
                         eric.wuyu1352@gmail.com
                       </a>  
                       <span className="text-muted-foreground"> |</span>
-                    <a
-                      href="https://shipany.ai"
-                      target="_blank"
-                      className="px-2 text-primary"
-                    >
-                      build with ShipAny
-                    </a>
+                    
                     </>
                   )}
                 </p>

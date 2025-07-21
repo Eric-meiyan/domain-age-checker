@@ -82,6 +82,59 @@ export async function POST(request: NextRequest) {
     console.log('POST /api/domain-check - Request body:', body);
     
     // 验证请求参数
+    if (body.domains && Array.isArray(body.domains) && body.domains.length > 0) {
+      console.log(`POST /api/domain-check - Processing ${body.domains.length} direct domains`);
+      
+      // 限制域名数量
+      const maxDomains = 10;
+      const limitedDomains = body.domains.slice(0, maxDomains);
+      const limitApplied = body.domains.length > maxDomains;
+      
+      const startTime = Date.now();
+      
+      // 为每个 domain 查询
+      const results = await Promise.all(limitedDomains.map(async (fullDomain: string) => {
+        const parts = fullDomain.split('.');
+        if (parts.length < 2) {
+          return { domain: fullDomain, available: false, error: 'Invalid domain format', timestamp: Date.now() };
+        }
+        const keyword = parts.slice(0, -1).join('.');
+        const tld = parts[parts.length - 1];
+        const domainName = `${keyword}.${tld}`;
+        
+        try {
+          return await domainCheckService.checkDomain(domainName);
+        } catch (error) {
+          return { domain: domainName, available: false, error: (error as Error).message, timestamp: Date.now() };
+        }
+      }));
+      
+      const endTime = Date.now();
+      const executionTime = endTime - startTime;
+      
+      const availableDomains = results.filter(r => r.available).length;
+      const unavailableDomains = results.filter(r => !r.available && !r.error).length;
+      const errorDomains = results.filter(r => Boolean(r.error)).length;
+      
+      return NextResponse.json({
+        success: true,
+        method: 'RDAP',
+        results,
+        stats: {
+          total: results.length,
+          available: availableDomains,
+          unavailable: unavailableDomains,
+          errors: errorDomains,
+          executionTime
+        },
+        limitApplied,
+        totalRequested: body.domains.length,
+        totalProcessed: limitedDomains.length,
+        timestamp: new Date().toISOString()
+      });
+    }
+    
+    // 原有 keywords/tlds 处理
     if (!body.keywords || !Array.isArray(body.keywords) || body.keywords.length === 0) {
       console.error('POST /api/domain-check - Missing keywords');
       return handleError('Keywords are required', 400);

@@ -42,37 +42,43 @@ export class DomainCheckService {
     try {
       console.log('Initializing Domain Check Service...');
       
-          // 1. 尝试加载缓存数据
-    const cacheLoaded = await this.loadCachedRdapData();
-    console.log(`Cache loaded: ${cacheLoaded ? 'Yes' : 'No'}`);
-    console.log(`lastUpdateTime after cache load: ${this.lastUpdateTime}`);
-    console.log(`RDAP server map size after cache load: ${this.rdapServerMap.size}`);
-    
-    // 2. 确保关键TLD有RDAP服务器
-    this.ensureCriticalTlds();
-    console.log(`RDAP server map size after ensureCriticalTlds: ${this.rdapServerMap.size}`);
+      // 1. 加载TLD配置文件
+      await this.loadTldConfigFile();
+      console.log(`Loaded ${this.tldConfigs.length} TLD configurations from config file`);
       
-      // 3. 设置定期更新任务
+      // 2. 尝试加载缓存数据
+      const cacheLoaded = await this.loadCachedRdapData();
+      console.log(`Cache loaded: ${cacheLoaded ? 'Yes' : 'No'}`);
+      console.log(`lastUpdateTime after cache load: ${this.lastUpdateTime}`);
+      console.log(`RDAP server map size after cache load: ${this.rdapServerMap.size}`);
+      
+      // 3. 确保关键TLD有RDAP服务器
+      this.ensureCriticalTlds();
+      console.log(`RDAP server map size after ensureCriticalTlds: ${this.rdapServerMap.size}`);
+      
+      // 4. 设置定期更新任务
       this.schedulePeriodicUpdate();
       
-          // 4. 检查是否需要立即更新数据
-    if (!cacheLoaded || this.isCacheStale()) {
-      console.log('Cache is stale or missing, updating RDAP data...');
-      // 启动时更新，但使用较短超时 - 添加 await！
-      const updateSuccess = await this.updateRdapData(true);
-      console.log(`RDAP update completed: ${updateSuccess ? 'Success' : 'Failed'}`);
-      console.log(`RDAP server map size after update: ${this.rdapServerMap.size}`);
-    }
+      // 5. 检查是否需要立即更新数据
+      if (!cacheLoaded || this.isCacheStale()) {
+        console.log('Cache is stale or missing, updating RDAP data...');
+        // 启动时更新，但使用较短超时 - 添加 await！
+        const updateSuccess = await this.updateRdapData(true);
+        console.log(`RDAP update completed: ${updateSuccess ? 'Success' : 'Failed'}`);
+        console.log(`RDAP server map size after update: ${this.rdapServerMap.size}`);
+      }
       
-      // 5. 从RDAP服务器信息生成tldConfigs（为了兼容性）
+      // 6. 从RDAP服务器信息生成tldConfigs（为了兼容性）
       this.generateTldConfigsFromRdap();
       
       console.log(`RDAP Server Map has ${this.rdapServerMap.size} entries`);
+      console.log(`Final TLD configs count: ${this.tldConfigs.length}`);
       console.log('Domain Check Service initialization completed');
     } catch (error) {
       console.error('Failed to initialize Domain Check Service:', error);
       
       // 确保至少有基本的TLD配置
+      await this.loadTldConfigFile();
       this.ensureCriticalTlds();
       this.generateTldConfigsFromRdap();
       
@@ -234,6 +240,51 @@ export class DomainCheckService {
   }
   
   /**
+   * 从配置文件加载TLD配置
+   */
+  private async loadTldConfigFile(): Promise<void> {
+    try {
+      const configPath = path.join(process.cwd(), 'app/config/tld-config.json');
+      console.log(`Loading TLD config from ${configPath}`);
+      
+      const data = await fs.readFile(configPath, 'utf8');
+      const config = JSON.parse(data);
+      
+      if (!config.tlds || !Array.isArray(config.tlds)) {
+        throw new Error('Invalid TLD config format: missing tlds array');
+      }
+      
+      // 清空现有配置并加载新配置
+      this.tldConfigs = config.tlds.filter((tld: any) => 
+        tld.name && tld.server && tld.availablePattern && tld.enabled
+      );
+      
+      console.log(`Loaded ${this.tldConfigs.length} TLD configurations from config file`);
+      
+      // 验证配置
+      const validConfigs = this.tldConfigs.filter(config => 
+        typeof config.name === 'string' && 
+        typeof config.server === 'string' && 
+        typeof config.availablePattern === 'string'
+      );
+      
+      if (validConfigs.length !== this.tldConfigs.length) {
+        console.warn(`${this.tldConfigs.length - validConfigs.length} invalid TLD configurations were filtered out`);
+        this.tldConfigs = validConfigs;
+      }
+      
+    } catch (error: any) {
+      if (error.code === 'ENOENT') {
+        console.warn('TLD config file not found, using only critical TLDs');
+        this.tldConfigs = [];
+      } else {
+        console.error('Failed to load TLD config file:', error);
+        throw new Error(`Failed to load TLD configuration: ${error.message}`);
+      }
+    }
+  }
+
+  /**
    * 从缓存文件加载RDAP数据
    */
   private async loadCachedRdapData(): Promise<boolean> {
@@ -316,7 +367,8 @@ export class DomainCheckService {
       'xyz': ['whois.nic.xyz', 'DOMAIN NOT FOUND'],
       'tech': ['whois.nic.tech', 'DOMAIN NOT FOUND'],
       'app': ['whois.nic.google', 'Domain not found'],
-      'dev': ['whois.nic.google', 'Domain not found']
+      'dev': ['whois.nic.google', 'Domain not found'],
+      'so': ['whois.nic.so', 'Not found']
     };
     
     // 确保tldConfigs包含这些关键TLD
@@ -346,8 +398,15 @@ export class DomainCheckService {
    * 从RDAP服务器映射生成TLD配置
    */
   private generateTldConfigsFromRdap(): void {
+    // 保存现有的WHOIS配置
+    const existingWhoisConfigs = this.tldConfigs.filter(config => 
+      config.server && !config.server.startsWith('https://')
+    );
+    
+    // 重置配置数组
     this.tldConfigs = [];
     
+    // 添加RDAP配置
     this.rdapServerMap.forEach((servers, tldName) => {
       if (servers.length > 0) {
         this.tldConfigs.push({
@@ -360,7 +419,14 @@ export class DomainCheckService {
       }
     });
     
-    console.log(`Generated ${this.tldConfigs.length} TLD configurations from RDAP server map`);
+    // 重新添加WHOIS配置（对于没有RDAP服务器的TLD）
+    existingWhoisConfigs.forEach(whoisConfig => {
+      if (!this.tldConfigs.find(config => config.name === whoisConfig.name)) {
+        this.tldConfigs.push(whoisConfig);
+      }
+    });
+    
+    console.log(`Generated ${this.tldConfigs.length} TLD configurations from RDAP server map (including ${existingWhoisConfigs.length} WHOIS fallbacks)`);
   }
   
   /**
@@ -506,6 +572,44 @@ export class DomainCheckService {
   }
   
   /**
+   * 检查单个域名的可用性
+   */
+  public async checkDomain(domain: string): Promise<DomainCheckResult> {
+    const parts = domain.split('.');
+    if (parts.length < 2) {
+      throw new Error('Invalid domain format');
+    }
+    const keyword = parts.slice(0, -1).join('.');
+    const tld = parts[parts.length - 1];
+    const domainName = `${keyword}.${tld}`;
+
+    // First try RDAP
+    const rdapResult = await this.checkSingleDomainRdap(domainName, tld);
+
+    // If RDAP failed, try WHOIS fallback
+    if (rdapResult.error) {
+      console.log(`RDAP failed for ${domainName}, attempting WHOIS fallback`);
+      const tldConfig = this.tldConfigs.find(config => config.name === tld);
+      if (tldConfig?.server && tldConfig.availablePattern) {
+        try {
+          const whoisResult = await this.checkSingleDomainWhois(
+            domainName,
+            tldConfig.server,
+            tldConfig.availablePattern,
+            tld
+          );
+          whoisResult.method = 'WHOIS (RDAP fallback)';
+          return whoisResult;
+        } catch (whoisError) {
+          rdapResult.error = `${rdapResult.error}. WHOIS fallback failed: ${(whoisError as Error).message}`;
+          return rdapResult;
+        }
+      }
+    }
+    return rdapResult;
+  }
+  
+  /**
    * 解析RDAP响应中的时间信息
    */
   private parseRdapTimeData(rdapData: any): {
@@ -556,6 +660,142 @@ export class DomainCheckService {
     }
 
     return result;
+  }
+
+  /**
+   * 解析WHOIS响应中的时间信息
+   */
+  private parseWhoisTimeData(whoisResponse: string): {
+    registrationDate?: string;
+    expirationDate?: string;
+    lastChangedDate?: string;
+    domainAge?: number;
+  } {
+    const result: {
+      registrationDate?: string;
+      expirationDate?: string;
+      lastChangedDate?: string;
+      domainAge?: number;
+    } = {};
+
+    if (!whoisResponse) {
+      return result;
+    }
+
+    // 将响应按行分割，便于逐行解析
+    const lines = whoisResponse.split('\n');
+    
+    // 定义各种可能的时间字段模式
+    const patterns = {
+      registration: [
+        /creation date:\s*(.+)/i,
+        /created:\s*(.+)/i,
+        /registered:\s*(.+)/i,
+        /registration time:\s*(.+)/i,
+        /domain_dateregistered:\s*(.+)/i,
+        /registered on:\s*(.+)/i
+      ],
+      expiration: [
+        /expir(?:y|ation) date:\s*(.+)/i,
+        /expires:\s*(.+)/i,
+        /expiry:\s*(.+)/i,
+        /expire:\s*(.+)/i,
+        /domain_datebilleduntil:\s*(.+)/i,
+        /expires on:\s*(.+)/i
+      ],
+      lastChanged: [
+        /updated date:\s*(.+)/i,
+        /last updated:\s*(.+)/i,
+        /changed:\s*(.+)/i,
+        /modified:\s*(.+)/i,
+        /last modified:\s*(.+)/i,
+        /domain_datelastmodified:\s*(.+)/i
+      ]
+    };
+
+    // 解析每一行
+    for (const line of lines) {
+      const trimmedLine = line.trim();
+      if (!trimmedLine) continue;
+
+      // 检查注册日期
+      if (!result.registrationDate) {
+        for (const pattern of patterns.registration) {
+          const match = trimmedLine.match(pattern);
+          if (match && match[1]) {
+            result.registrationDate = this.normalizeDate(match[1].trim());
+            break;
+          }
+        }
+      }
+
+      // 检查过期日期
+      if (!result.expirationDate) {
+        for (const pattern of patterns.expiration) {
+          const match = trimmedLine.match(pattern);
+          if (match && match[1]) {
+            result.expirationDate = this.normalizeDate(match[1].trim());
+            break;
+          }
+        }
+      }
+
+      // 检查最后修改日期
+      if (!result.lastChangedDate) {
+        for (const pattern of patterns.lastChanged) {
+          const match = trimmedLine.match(pattern);
+          if (match && match[1]) {
+            result.lastChangedDate = this.normalizeDate(match[1].trim());
+            break;
+          }
+        }
+      }
+    }
+
+    // 计算域名年龄
+    if (result.registrationDate) {
+      try {
+        const regDate = new Date(result.registrationDate);
+        if (!isNaN(regDate.getTime())) {
+          const now = new Date();
+          const diffTime = now.getTime() - regDate.getTime();
+          result.domainAge = Math.floor(diffTime / (1000 * 60 * 60 * 24)); // 转换为天数
+        }
+      } catch (error) {
+        console.warn('Error calculating domain age from WHOIS data:', error);
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * 标准化日期格式
+   */
+  private normalizeDate(dateStr: string): string {
+    if (!dateStr) return '';
+    
+    // 移除常见的后缀和前缀
+    let cleaned = dateStr
+      .replace(/\s*\(.*?\)/g, '') // 移除括号内容
+      .replace(/\s*UTC.*$/i, '') // 移除UTC后缀
+      .replace(/\s*GMT.*$/i, '') // 移除GMT后缀
+      .replace(/\s*Z$/i, '') // 移除Z后缀
+      .trim();
+
+    try {
+      // 尝试解析日期
+      const date = new Date(cleaned);
+      if (!isNaN(date.getTime())) {
+        // 返回ISO格式
+        return date.toISOString();
+      }
+    } catch (error) {
+      console.warn(`Failed to parse date: ${dateStr}`, error);
+    }
+
+    // 如果解析失败，返回原始字符串
+    return cleaned;
   }
 
   /**
@@ -714,6 +954,12 @@ export class DomainCheckService {
       const response = await this.whoisQuery(whoisServer, domain);
       result.available = response.includes(availablePattern);
       console.log(`Domain ${domain} is ${result.available ? 'available' : 'not available'} via WHOIS`);
+      
+      // 如果域名不可用（已注册），解析WHOIS响应中的时间信息
+      if (!result.available) {
+        const timeData = this.parseWhoisTimeData(response);
+        Object.assign(result, timeData);
+      }
       
       // 保存一部分WHOIS响应用于调试
       const snippetLength = 100;

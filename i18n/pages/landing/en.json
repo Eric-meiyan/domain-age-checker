@@ -557,15 +557,15 @@
   "footer": {
     "name": "footer",
     "brand": {
-      "title": "AIDomain",
-      "description": "Batch query whether domain names are available, or use AI to generate domain keywords quickly and efficiently!",
+      "title": "Domain Age Checker",
+      "description": "",
       "logo": {
         "src": "/logo.png",
-        "alt": "AIDomain"
+        "alt": "Domain Age Checker"
       },
       "url": "/"
     },
-    "copyright": "© 2025 • AIDomain All rights reserved.",
+    "copyright": "© 2025 • Domain Age Checker All rights reserved.",
     "nav": {
       "items": [
       ]
